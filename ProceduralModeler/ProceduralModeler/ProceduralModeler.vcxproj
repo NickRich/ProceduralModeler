@@ -70,9 +70,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.h" />
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

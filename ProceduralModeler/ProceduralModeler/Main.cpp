@@ -15,6 +15,7 @@
 #include "GL/glew.h"
 #include "GL/glut.h"
 #include "Cloud.h"
+#include "Terrain.h"
 
 void display()
 {
