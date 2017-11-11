@@ -22,6 +22,7 @@ void display()
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	Cloud * c = new Cloud();
+	Terrain * t = new Terrain();
 	c->genNoise();
 	glutSwapBuffers();
 
