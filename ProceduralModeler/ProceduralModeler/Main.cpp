@@ -65,23 +65,39 @@ void display()
 {
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
 	Cloud * c = new Cloud();
 	c->genNoise();
+
+	for (int i = 0; i < rightEndpointX - 1; i++)
+	{
+		int line[4] =
+		{
+			i,
+			heights[i],
+			i + 1,
+			heights[i + 1]
+		};
+		glVertexPointer(2, GL_FLOAT, 0, line);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glFlush();
+
 	glutSwapBuffers();
-
 }
-
 
 /**
 *    Main function
 */
 int main(int argc, char **argv)
 {
-	srand(time(NULL));
-	t = new Terrain();
-
-	//calculate values, sotre in array
-	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
@@ -89,6 +105,14 @@ int main(int argc, char **argv)
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("OpenGL/FreeGLUT - Example: Rendering a textured .obj model using shaders");
+
+	srand(time(NULL));
+	t = new Terrain();
+
+	//calculate values, sotre in array
+	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
+
+	glutDisplayFunc(display);
 
 	/* Init GLEW */
 	GLenum err = glewInit();
