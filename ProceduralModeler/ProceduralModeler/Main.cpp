@@ -11,28 +11,78 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <time.h>
 
 #include "GL/glew.h"
 #include "GL/glut.h"
 #include "Cloud.h"
 #include "Terrain.h"
 
+Terrain * t;
+bool generatingMountains = true;
+int leftEndpointY; //Holds value for height of leftEndpoint
+int rightEndpointX; //Holds value for height of rightEndpoint
+int leftEndpointX = 0; //Holds value for least x position (start of screen)
+int rightEndpointY = 499; //Holds value highest x position (width of screen)
+float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
+int heights[500]; //used to store heights for each 
+
+void generateEndpoints()
+{
+	//These numbers are by no means set in stone,
+	//I'm just trying to get my thoughts in order
+
+	if (generatingMountains)
+	{
+		leftEndpointY = rand() % 500;
+		rightEndpointY = rand() % 500;
+	}
+	else
+	{
+		leftEndpointY = rand() % 100;
+		rightEndpointY = rand() % 100;
+	}
+}
+
+void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
+{
+	if (rightX - leftX <= 1)
+	{
+		return;
+	}
+	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
+	int midY = t->generateMidpoint(leftY, rightY, r);
+	int midX = (leftX + rightX) / 2;
+
+	heights[midX] = midY;
+
+	calcMidpoints(leftX, leftY, midX, midY);
+	calcMidpoints(midX, midY, rightX, rightY);
+}
+
+
 void display()
 {
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	Cloud * c = new Cloud();
-	Terrain * t = new Terrain();
 	c->genNoise();
 	glutSwapBuffers();
 
 }
+
 
 /**
 *    Main function
 */
 int main(int argc, char **argv)
 {
+	srand(time(NULL));
+	t = new Terrain();
+
+	//calculate values, sotre in array
+	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
+
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);
@@ -48,6 +98,9 @@ int main(int argc, char **argv)
 		std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
+
+	//need something to start with what kind of terrain we're generating
+	generateEndpoints();
 
   
     /* Start the main GLUT loop */
