@@ -6,7 +6,7 @@
 
 
 
-float Terrain::generateRandomOffset()
+float Terrain::generateRandomOffset(float aX, float aY, float bX, float bY, float s)
 {
 	//Code from slides
 	float x1;
@@ -21,10 +21,16 @@ float Terrain::generateRandomOffset()
 	} while (w >= 1.0);
 
 	w = sqrt((-2.0 * log(w)) / w);
-	//y1 = x1 * w;
-	//y2 = x2 * w;
 
-	return 0.0;
+	float y1 = x1 * w;
+	float y2 = x2 * w;
+
+	float posX = abs((long)(bX - aX));
+	float posY = abs((long)(bY - aY));
+
+	float afterGauss = y1 * posX + y2 * posY;
+
+	return s * afterGauss;
 }
 
 float Terrain::generateMidpoint(float a, float b, float r)
