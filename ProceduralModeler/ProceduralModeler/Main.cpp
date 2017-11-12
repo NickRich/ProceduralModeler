@@ -54,10 +54,13 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 		return;
 	}
 	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
-	int midY = t->generateMidpoint(leftY, rightY, r);
+	float midY = t->generateMidpoint(leftY, rightY, r);
 	int midX = (leftX + rightX) / 2;
 
 	heights[midX] = midY;
+
+	calcMidpoints(leftX, leftY, midX, midY);
+	calcMidpoints(midX, midY, rightX, rightY);
 }
 
 void display()
