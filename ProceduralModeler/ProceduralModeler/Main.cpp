@@ -19,6 +19,7 @@
 #include "Terrain.h"
 
 Terrain * t;
+Cloud * c;
 bool generatingMountains = true;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
@@ -58,21 +59,24 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 
 	heights[midX] = midY;
 
-	calcMidpoints(leftX, leftY, midX, midY);
-	calcMidpoints(midX, midY, rightX, rightY);
-}
-
-
 void display()
 {
-	glClearColor(0, 0, 0, 1);
+	//glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glutSwapBuffers();
 
+	//Split area by 2 every time until we cover the whole thing
+	//Calculate the midpoint at each step
+
+	//Get clouds and draw with glDrawPixels
+
+	/* Draw the square */
+	/* Step 1: Enable the clients for the vertex arrays */
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	Cloud * c = new Cloud();
-	c->genNoise();
+	float ** noise = c->genNoise();
 
 	for (int i = 0; i < rightEndpointX - 1; i++)
 	{
@@ -87,12 +91,18 @@ void display()
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 
+	/* Step 3: Disable the clients */
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
-
 	glFlush();
 
-	glutSwapBuffers();
+}
+
+/*redraw display*/
+void idle()
+{
+	/* Redraw the window */
+	glutPostRedisplay();
 }
 
 void idle()
@@ -105,7 +115,9 @@ void idle()
 */
 int main(int argc, char **argv)
 {
-
+	srand(time(NULL));
+	t = new Terrain();
+	c = new Cloud();
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);

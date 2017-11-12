@@ -26,10 +26,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.h">
+    <ClInclude Include="Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h">
+    <ClInclude Include="..\..\Cloud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
