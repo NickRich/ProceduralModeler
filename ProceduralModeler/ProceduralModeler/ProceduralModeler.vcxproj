@@ -68,12 +68,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.h" />
+    <ClInclude Include="..\..\Cloud.h" />
     <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

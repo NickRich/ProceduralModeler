@@ -19,13 +19,10 @@
 #include "Terrain.h"
 
 Terrain * t;
+Cloud * c;
 bool generatingMountains = true;
-int leftEndpointY; //Holds value for height of leftEndpoint
-int rightEndpointX; //Holds value for height of rightEndpoint
-int leftEndpointX = 0; //Holds value for least x position (start of screen)
-int rightEndpointY = 499; //Holds value highest x position (width of screen)
-float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
-int heights[500]; //used to store heights for each 
+float leftEndpoint;
+float rightEndpoint;
 
 void generateEndpoints()
 {
@@ -34,63 +31,52 @@ void generateEndpoints()
 
 	if (generatingMountains)
 	{
-		leftEndpointY = rand() % 500;
-		rightEndpointY = rand() % 500;
+		leftEndpoint = rand() % 500;
+		rightEndpoint = rand() % 500;
 	}
 	else
 	{
-		leftEndpointY = rand() % 100;
-		rightEndpointY = rand() % 100;
+		leftEndpoint = rand() % 100;
+		rightEndpoint = rand() % 100;
 	}
 }
 
-void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
-{
-	if (rightX - leftX <= 1)
-	{
-		return;
-	}
-	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
-	int midY = t->generateMidpoint(leftY, rightY, r);
-	int midX = (leftX + rightX) / 2;
-
-	heights[midX] = midY;
-
-	calcMidpoints(leftX, leftY, midX, midY);
-	calcMidpoints(midX, midY, rightX, rightY);
-}
 
 
 void display()
 {
-	glClearColor(0, 0, 0, 1);
+	//glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glutSwapBuffers();
 
+	//Split area by 2 every time until we cover the whole thing
+	//Calculate the midpoint at each step
+
+	//Get clouds and draw with glDrawPixels
+
+	/* Draw the square */
+	/* Step 1: Enable the clients for the vertex arrays */
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	Cloud * c = new Cloud();
-	c->genNoise();
+	float ** noise = c->genNoise();
 
-	for (int i = 0; i < rightEndpointX - 1; i++)
-	{
-		int line[4] =
-		{
-			i,
-			heights[i],
-			i + 1,
-			heights[i + 1]
-		};
-		glVertexPointer(2, GL_FLOAT, 0, line);
-		glDrawArrays(GL_LINES, 0, 2);
-	}
+	/* Step 2: Set up arrays and draw them */
+	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
 
+	/* Step 3: Disable the clients */
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
-
 	glFlush();
 
-	glutSwapBuffers();
+}
+
+/*redraw display*/
+void idle()
+{
+	/* Redraw the window */
+	glutPostRedisplay();
 }
 
 /**
@@ -98,21 +84,15 @@ void display()
 */
 int main(int argc, char **argv)
 {
-
+	srand(time(NULL));
+	t = new Terrain();
+	c = new Cloud();
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("OpenGL/FreeGLUT - Example: Rendering a textured .obj model using shaders");
-
-	srand(time(NULL));
-	t = new Terrain();
-
-	//calculate values, sotre in array
-	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
-
-	glutDisplayFunc(display);
 
 	/* Init GLEW */
 	GLenum err = glewInit();
@@ -125,7 +105,8 @@ int main(int argc, char **argv)
 
 	//need something to start with what kind of terrain we're generating
 	generateEndpoints();
-
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
   
     /* Start the main GLUT loop */
     /* NOTE: No code runs after this */
