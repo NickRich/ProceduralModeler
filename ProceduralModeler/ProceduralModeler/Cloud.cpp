@@ -4,7 +4,7 @@
 #include "GL/glew.h"
 #include "GL/glut.h"
 
-float noise[200][200];
+float noise[100][100];
 
 Cloud::Cloud()
 {
@@ -23,15 +23,16 @@ void Cloud::setValues(int xPos, int yPos, float darkness, int width, int length)
 float** Cloud::genNoise()
 {
 
-	for (int x = 0; x < 200; x++)
+	for (int x = 0; x < 100; x++)
 	{
-		for (int y = 0; y < 200; y++)
+		for (int y = 0; y < 100; y++)
 		{
-			noise[x][y] = rand();
+			noise[x][y] = 1.0;//(rand() % 32768) / 32768.0;
 		}
 	}
 
-	float ** noisePointer = (float**)noise;
+	//printf("noise %f", noise[0][0]);
+	float ** noisePointer = (float**) noise;
 	return noisePointer;
 }
 

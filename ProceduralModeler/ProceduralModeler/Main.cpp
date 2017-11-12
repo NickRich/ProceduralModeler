@@ -55,19 +55,21 @@ void display()
 
 	//Get clouds and draw with glDrawPixels
 
-	/* Draw the square */
-	/* Step 1: Enable the clients for the vertex arrays */
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
+	/* Draw clouds*/
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glDrawBuffer(GL_FRONT_AND_BACK);
 
 	float ** noise = c->genNoise();
+	
+	glDrawPixels(100, 100, GL_COLOR_INDEX, GL_FLOAT, noise);
 
-	/* Step 2: Set up arrays and draw them */
-	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
-
-	/* Step 3: Disable the clients */
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
+	/* Disable the clients */
+	glDrawBuffer(GL_BACK);
+	glutSwapBuffers();
 	glFlush();
 
 }
