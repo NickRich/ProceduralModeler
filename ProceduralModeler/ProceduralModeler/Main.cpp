@@ -12,6 +12,8 @@
 #include <fstream>
 #include <string>
 #include <time.h>
+#include <vector>
+using namespace std;
 
 #include "GL/glew.h"
 #include "GL/glut.h"
@@ -27,6 +29,9 @@ int leftEndpointX = 0; //Holds value for least x position (start of screen)
 int rightEndpointX = 499; //Holds value highest x position (width of screen)
 float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
 int heights[500]; //used to store heights for each 
+
+GLuint cloudTex;
+GLuint fragmentShader = 0;
 
 void generateEndpoints()
 {
@@ -65,10 +70,8 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 
 void display()
 {
-	//glClearColor(0, 0, 0, 1);
+	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glutSwapBuffers();
 
 	//Split area by 2 every time until we cover the whole thing
 	//Calculate the midpoint at each step
@@ -76,23 +79,27 @@ void display()
 	//Get clouds and draw with glDrawPixels
 
 	/* Draw clouds*/
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+
+	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glDrawBuffer(GL_FRONT_AND_BACK);
+	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
+	
+	for (int x = 0; x < 100; x++)
+	{
+		for (int y = 0; y < 100; y++)
+		{ 
+			float pixNoise = c->getNoise(x,y);
+			glBegin(GL_POINTS);
+			glColor3f(pixNoise,pixNoise,pixNoise);
+			glVertex2i(x, y);
+			glEnd();
+		}
+	}
 
-	float ** noise = c->genNoise();
-
-	/* Step 2: Set up arrays and draw them */
-	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
-
-	/* Disable the clients */
-	glDrawBuffer(GL_BACK);
 	glutSwapBuffers();
 	glFlush();
-
+	
 }
 
 /*redraw display*/
@@ -107,6 +114,7 @@ void idle()
 */
 int main(int argc, char **argv)
 {
+	
 	srand(time(NULL));
 	t = new Terrain();
 	c = new Cloud();
@@ -139,7 +147,6 @@ int main(int argc, char **argv)
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-  
     /* Start the main GLUT loop */
     /* NOTE: No code runs after this */
     glutMainLoop();
