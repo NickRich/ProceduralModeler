@@ -58,6 +58,7 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 	int midX = (leftX + rightX) / 2;
 
 	heights[midX] = midY;
+}
 
 void display()
 {
@@ -102,11 +103,6 @@ void display()
 void idle()
 {
 	/* Redraw the window */
-	glutPostRedisplay();
-}
-
-void idle()
-{
 	glutPostRedisplay();
 }
 
