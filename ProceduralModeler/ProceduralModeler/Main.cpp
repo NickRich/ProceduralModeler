@@ -21,9 +21,9 @@
 Terrain * t;
 bool generatingMountains = true;
 int leftEndpointY; //Holds value for height of leftEndpoint
-int rightEndpointX; //Holds value for height of rightEndpoint
+int rightEndpointY; //Holds value for height of rightEndpoint
 int leftEndpointX = 0; //Holds value for least x position (start of screen)
-int rightEndpointY = 499; //Holds value highest x position (width of screen)
+int rightEndpointX = 499; //Holds value highest x position (width of screen)
 float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
 int heights[500]; //used to store heights for each 
 
@@ -42,6 +42,8 @@ void generateEndpoints()
 		leftEndpointY = rand() % 100;
 		rightEndpointY = rand() % 100;
 	}
+	heights[leftEndpointX] = leftEndpointY;
+	heights[rightEndpointX] = rightEndpointY;
 }
 
 void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
@@ -93,6 +95,11 @@ void display()
 	glutSwapBuffers();
 }
 
+void idle()
+{
+	glutPostRedisplay();
+}
+
 /**
 *    Main function
 */
@@ -108,11 +115,16 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 	t = new Terrain();
+	roughnessFactor = 1;
+
+	//need something to start with what kind of terrain we're generating
+	generateEndpoints();
 
 	//calculate values, sotre in array
 	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
 
 	glutDisplayFunc(display);
+	glutIdleFunc(idle);
 
 	/* Init GLEW */
 	GLenum err = glewInit();
@@ -122,9 +134,6 @@ int main(int argc, char **argv)
 		std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
-
-	//need something to start with what kind of terrain we're generating
-	generateEndpoints();
 
   
     /* Start the main GLUT loop */

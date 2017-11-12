@@ -68,7 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\ProceduralModeler\ProceduralModeler\ProceduralModeler\Cloud.cpp" />
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Terrain.cpp" />
   </ItemGroup>

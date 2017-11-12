@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "GL/glew.h"
 #include "GL/glut.h"
-#include "GL/glui.h"
+//#include "GL/glui.h"
 
 float noise[200][200];
 
