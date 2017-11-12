@@ -21,8 +21,12 @@
 Terrain * t;
 Cloud * c;
 bool generatingMountains = true;
-float leftEndpoint;
-float rightEndpoint;
+int leftEndpointY; //Holds value for height of leftEndpoint
+int rightEndpointY; //Holds value for height of rightEndpoint
+int leftEndpointX = 0; //Holds value for least x position (start of screen)
+int rightEndpointX = 499; //Holds value highest x position (width of screen)
+float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
+int heights[500]; //used to store heights for each 
 
 void generateEndpoints()
 {
@@ -31,17 +35,33 @@ void generateEndpoints()
 
 	if (generatingMountains)
 	{
-		leftEndpoint = rand() % 500;
-		rightEndpoint = rand() % 500;
+		leftEndpointY = rand() % 500;
+		rightEndpointY = rand() % 500;
 	}
 	else
 	{
-		leftEndpoint = rand() % 100;
-		rightEndpoint = rand() % 100;
+		leftEndpointY = rand() % 100;
+		rightEndpointY = rand() % 100;
 	}
+	heights[leftEndpointX] = leftEndpointY;
+	heights[rightEndpointX] = rightEndpointY;
 }
 
+void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
+{
+	if (rightX - leftX <= 1)
+	{
+		return;
+	}
+	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
+	float midY = t->generateMidpoint(leftY, rightY, r);
+	int midX = (leftX + rightX) / 2;
 
+	heights[midX] = midY;
+
+	calcMidpoints(leftX, leftY, midX, midY);
+	calcMidpoints(midX, midY, rightX, rightY);
+}
 
 void display()
 {
@@ -64,8 +84,9 @@ void display()
 	glDrawBuffer(GL_FRONT_AND_BACK);
 
 	float ** noise = c->genNoise();
-	
-	glDrawPixels(100, 100, GL_COLOR_INDEX, GL_FLOAT, noise);
+
+	/* Step 2: Set up arrays and draw them */
+	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
 
 	/* Disable the clients */
 	glDrawBuffer(GL_BACK);
@@ -96,6 +117,19 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("OpenGL/FreeGLUT - Example: Rendering a textured .obj model using shaders");
 
+	srand(time(NULL));
+	t = new Terrain();
+	roughnessFactor = 1;
+
+	//need something to start with what kind of terrain we're generating
+	generateEndpoints();
+
+	//calculate values, sotre in array
+	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
+
+	glutDisplayFunc(display);
+	glutIdleFunc(idle);
+
 	/* Init GLEW */
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
@@ -105,10 +139,6 @@ int main(int argc, char **argv)
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-	//need something to start with what kind of terrain we're generating
-	generateEndpoints();
-	glutDisplayFunc(display);
-	glutIdleFunc(idle);
   
     /* Start the main GLUT loop */
     /* NOTE: No code runs after this */

@@ -33,9 +33,11 @@ float Terrain::generateRandomOffset(float aX, float aY, float bX, float bY, floa
 	return s * afterGauss;
 }
 
-int Terrain::generateMidpoint(float a, float b, float r)
+float Terrain::generateMidpoint(float a, float b, float r)
 {
 	//pass in y(a) as a and y(b) as b, r is randomOffset
 	//return (y(a)+y(b))/2 + r
-	return ((a + b) / 2 + r);
+	//return ((a + b) / 2 + r);
+	float retValue = (a + b) / 2.0;
+	return retValue;
 }
