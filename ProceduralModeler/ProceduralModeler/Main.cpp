@@ -24,44 +24,9 @@ bool generatingMountains = true;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
 int leftEndpointX = 0; //Holds value for least x position (start of screen)
-int rightEndpointX = 499; //Holds value highest x position (width of screen)
+int rightEndpointX = 200; //Holds value highest x position (width of screen)
 float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
-int heights[500]; //used to store heights for each 
 
-void generateEndpoints()
-{
-	//These numbers are by no means set in stone,
-	//I'm just trying to get my thoughts in order
-
-	if (generatingMountains)
-	{
-		leftEndpointY = rand() % 500;
-		rightEndpointY = rand() % 500;
-	}
-	else
-	{
-		leftEndpointY = rand() % 100;
-		rightEndpointY = rand() % 100;
-	}
-	heights[leftEndpointX] = leftEndpointY;
-	heights[rightEndpointX] = rightEndpointY;
-}
-
-void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
-{
-	if (rightX - leftX <= 1)
-	{
-		return;
-	}
-	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
-	float midY = t->generateMidpoint(leftY, rightY, r);
-	int midX = (leftX + rightX) / 2;
-
-	heights[midX] = midY;
-
-	calcMidpoints(leftX, leftY, midX, midY);
-	calcMidpoints(midX, midY, rightX, rightY);
-}
 
 void display()
 {
@@ -69,9 +34,6 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glutSwapBuffers();
-
-	//Split area by 2 every time until we cover the whole thing
-	//Calculate the midpoint at each step
 
 	//Get clouds and draw with glDrawPixels
 
@@ -87,6 +49,8 @@ void display()
 
 	/* Step 2: Set up arrays and draw them */
 	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
+
+//	glDrawPixels(500, 500, GL_RGB, GL_FLOAT, (float**)t->pixels);
 
 	/* Disable the clients */
 	glDrawBuffer(GL_BACK);
@@ -108,7 +72,6 @@ void idle()
 int main(int argc, char **argv)
 {
 	srand(time(NULL));
-	t = new Terrain();
 	c = new Cloud();
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
@@ -118,14 +81,14 @@ int main(int argc, char **argv)
     glutCreateWindow("OpenGL/FreeGLUT - Example: Rendering a textured .obj model using shaders");
 
 	srand(time(NULL));
-	t = new Terrain();
-	roughnessFactor = 1;
+	roughnessFactor = .001;
+	t = new Terrain(rightEndpointX, roughnessFactor, true);
 
 	//need something to start with what kind of terrain we're generating
-	generateEndpoints();
-
-	//calculate values, sotre in array
-	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
+	t->generateEndpoints();
+	//calculate values, store in array
+	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX]);
+	t->makePicture();
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
