@@ -77,7 +77,7 @@ void drawTerrain()
 	glFlush();
 }
 
-void drawClouds(float size)
+void drawClouds()
 {
 	/* Draw clouds*/
 	//draw clouds from the list
@@ -133,14 +133,8 @@ void display()
 	//Split area by 2 every time until we cover the whole thing
 	//Calculate the midpoint at each step
 
-	//draw clouds from the list
-	for(int i = 0; i < cloudList.size(); i++)
-	{
-		Cloud * cloud = cloudList.at(i);
-		drawCloud(cloud);
-		
-	}
-
+	/*Draw Clouds comment out if need be*/
+	drawClouds();
 	
 }
 
