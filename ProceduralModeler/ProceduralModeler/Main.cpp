@@ -146,12 +146,12 @@ int main(int argc, char **argv)
     glutCreateWindow("CS 334 - Procedural Modeling");
 
 	srand(time(NULL));
-	t = new Terrain(rightEndpointX, roughnessFactor, generatingMountains);
+	t = new Terrain(rightEndpointX, generatingMountains);
 
 	//need something to start with what kind of terrain we're generating
 	t->generateEndpoints();
 	//calculate values, store in array
-	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX]);
+	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
 	t->makePicture();
 
 	glutDisplayFunc(display);

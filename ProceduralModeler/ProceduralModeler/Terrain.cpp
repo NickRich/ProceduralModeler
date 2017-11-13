@@ -5,10 +5,9 @@
 #include "Terrain.h"
 
 
-Terrain::Terrain(int winWidth, float s, bool mountains)
+Terrain::Terrain(int winWidth, bool mountains)
 {
 	width = winWidth;
-	roughnessFactor = s;
 	genMountains = mountains;
 }
 
@@ -76,21 +75,21 @@ void Terrain::makePicture()
 	}
 }
 
-void Terrain::calcMidpoints(int leftX, int leftY, int rightX, int rightY)
+void Terrain::calcMidpoints(int leftX, int leftY, int rightX, int rightY, float s)
 {
 	if (rightX - leftX <= 1)
 	{
 		return;
 	}
-	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, 0.1);
-//	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
+//	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, 0.1);
+	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, s);
 	float midY = Terrain::generateMidpoint(leftY, rightY, r);
 	int midX = (leftX + rightX) / 2;
 
 	heights[midX] = midY;
 
-	calcMidpoints(leftX, leftY, midX, midY);
-	calcMidpoints(midX, midY, rightX, rightY);
+	calcMidpoints(leftX, leftY, midX, midY, s);
+	calcMidpoints(midX, midY, rightX, rightY, s);
 }
 
 void Terrain::generateEndpoints()
