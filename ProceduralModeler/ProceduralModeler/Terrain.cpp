@@ -58,7 +58,12 @@ void Terrain::makePicture()
 
 	for (int i = 0; i < width; i++)
 	{
-		pixels[i][(int)floor(heights[i])] = 1.0;
+		int height = (int)floor(heights[i]);
+		if (height > 500)
+		{
+			height = 500;
+		}
+		pixels[i][height] = 1.0;
 	}
 	for (int i = 0; i < width; i++)
 	{
@@ -81,7 +86,6 @@ void Terrain::calcMidpoints(int leftX, int leftY, int rightX, int rightY, float 
 	{
 		return;
 	}
-//	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, 0.1);
 	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, s);
 	float midY = Terrain::generateMidpoint(leftY, rightY, r);
 	int midX = (leftX + rightX) / 2;

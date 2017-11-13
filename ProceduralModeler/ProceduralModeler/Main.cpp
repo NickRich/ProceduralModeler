@@ -45,28 +45,115 @@ void drawTerrain()
 			float pixNoise = t->pixels[i][j];
 			glBegin(GL_POINTS);
 			if (pixNoise == 1.0) {
-				if (j < 100)
+				if (j < 125)
 				{
-					glColor3f(1.0, 1.0, 1.0);
+					int gray = 1;
+					if (j > 110)
+					{
+						gray = rand() % 2;
+					}
+					else if (j > 108)
+					{
+						gray = rand() % 5;
+					}
+					else if (j > 100)
+					{
+						gray = rand() % 10;
+					}
+					if (gray == 0)
+					{
+						glColor3f(0.5, 0.5, 0.5);
+					}
+					else
+					{
+						glColor3f(1.0, 1.0, 1.0);
+					}
 				}
-				else if (j < 250)
+				else if (j < 300)
 				{
-					glColor3f(0.5, 0.5, 0.5);
+					int white = 1;
+					int green = 1;
+					if (j < 130)
+					{
+						white = rand() % 2;
+					}
+					else if (j < 140)
+					{
+						white = rand() % 5;
+					}
+					else if (j < 150)
+					{
+						white = rand() % 10;
+					}
+
+					if (j > 290)
+					{
+						green = rand() % 2;
+					}
+					else if (j > 280)
+					{
+						green = rand() % 5;
+					}
+					else if (j > 275)
+					{
+						green = rand() % 10;
+					}
+					if (white == 0)
+					{
+						glColor3f(1.0, 1.0, 1.0);
+					}
+					else if (green == 0)
+					{
+						glColor3f(0.0, 1.0, 0.0);
+					}
+					else
+					{
+						glColor3f(0.5, 0.5, 0.5);
+					}
 				}
 				else
 				{
 					if (generatingDesert)
 					{
-						glColor3f(0.86, 0.58, 0.44);
+						int darkBrown = rand() % 15;
+						if (darkBrown == 0)
+						{
+							glColor3f(0.36, 0.25, 0.31);
+						}
+						else
+						{
+							glColor3f(0.86, 0.58, 0.44);
+						}
 					}
-					else {
-						glColor3f(0.0, 1.0, 0.0);
+					else
+					{
+						int gray = 1;
+						if (j < 310)
+						{
+							gray = rand() % 2;
+						}
+						else if (j < 320)
+						{
+							gray = rand() % 5;
+						}
+						else if (j < 325)
+						{
+							gray = rand() % 10;
+						}
+						if (gray == 0)
+						{
+							glColor3f(0.5, 0.5, 0.5);
+						}
+						else
+						{
+							glColor3f(0.0, 1.0, 0.0);
+						}
 					}
 				}
 			}
 			else
 			{
-				glColor3f(0.0, 0.5, 0.8);
+				glColor3f(0.2, 0.6, 0.8);
 			}
 			glVertex2i(i, j);
 			glEnd();
@@ -134,7 +221,9 @@ void display()
 	//Calculate the midpoint at each step
 
 	/*Draw Clouds comment out if need be*/
-	drawClouds();
+	//drawClouds();
+
+	drawTerrain();
 	
 }
 
@@ -180,7 +269,7 @@ int main(int argc, char **argv)
 	t->makePicture();
 
 	glutDisplayFunc(display);
-	glutIdleFunc(idle);
+//	glutIdleFunc(idle);
 
 	/* Init GLEW */
 	GLenum err = glewInit();
