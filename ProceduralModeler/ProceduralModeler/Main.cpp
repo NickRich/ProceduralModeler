@@ -22,6 +22,7 @@ using namespace std;
 
 Terrain * t;
 Cloud * c;
+vector<Cloud *> cloudList;
 bool generatingMountains = true;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
@@ -68,6 +69,31 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 	calcMidpoints(midX, midY, rightX, rightY);
 }
 
+void drawCloud(Cloud * c)
+{
+	/* Draw clouds*/
+
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
+
+	for (int x = 0; x < 500; x++)
+	{
+		for (int y = 0; y < 500; y++)
+		{
+			float pixNoise = c->getNoise(x, y);
+			glBegin(GL_POINTS);
+			glColor3f(pixNoise, pixNoise, pixNoise);
+			glVertex2i(x, y);
+			glEnd();
+		}
+	}
+
+	glutSwapBuffers();
+	glFlush();
+}
+
 void display()
 {
 	glClearColor(0, 0, 0, 1);
@@ -76,29 +102,14 @@ void display()
 	//Split area by 2 every time until we cover the whole thing
 	//Calculate the midpoint at each step
 
-	//Get clouds and draw with glDrawPixels
-
-	/* Draw clouds*/
-
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
-	
-	for (int x = 0; x < 100; x++)
+	//draw clouds from the list
+	for(int i = 0; i < cloudList.size(); i++)
 	{
-		for (int y = 0; y < 100; y++)
-		{ 
-			float pixNoise = c->getNoise(x,y);
-			glBegin(GL_POINTS);
-			glColor3f(pixNoise,pixNoise,pixNoise);
-			glVertex2i(x, y);
-			glEnd();
-		}
+		Cloud * cloud = cloudList.at(i);
+		drawCloud(cloud);
+		
 	}
 
-	glutSwapBuffers();
-	glFlush();
 	
 }
 
@@ -117,7 +128,10 @@ int main(int argc, char **argv)
 	
 	srand(time(NULL));
 	t = new Terrain();
+	//create a new cloud and add it to the list of clouds
 	c = new Cloud();
+	cloudList.push_back(c);
+
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);

@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 
-float noise[100][100];
+float noise[500][500];
 
 Cloud::Cloud()
 {
@@ -31,9 +31,9 @@ float Cloud::getNoise(int x , int y)
 void Cloud::genNoise()
 {
 
-	for (int x = 0; x < 100; x++)
+	for (int x = 0; x < 500; x++)
 	{
-		for (int y = 0; y < 100; y++)
+		for (int y = 0; y < 500; y++)
 		{
 			
 			noise[x][y] = (rand() % 32768) / 32768.0;
