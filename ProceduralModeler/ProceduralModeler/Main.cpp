@@ -12,6 +12,8 @@
 #include <fstream>
 #include <string>
 #include <time.h>
+#include <vector>
+using namespace std;
 
 #include "GL/glew.h"
 #include "GL/glut.h"
@@ -20,43 +22,58 @@
 
 Terrain * t;
 Cloud * c;
+vector<Cloud *> cloudList;
 bool generatingMountains = true;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
 int leftEndpointX = 0; //Holds value for least x position (start of screen)
-int rightEndpointX = 200; //Holds value highest x position (width of screen)
+int rightEndpointX = 500; //Holds value highest x position (width of screen)
 float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
 
 
-void display()
+
+void drawCloud(Cloud * c)
 {
-	//glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glutSwapBuffers();
-
-	//Get clouds and draw with glDrawPixels
-
 	/* Draw clouds*/
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+
+	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glDrawBuffer(GL_FRONT_AND_BACK);
+	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
 
-	float ** noise = c->genNoise();
+	for (int x = 0; x < 500; x++)
+	{
+		for (int y = 0; y < 500; y++)
+		{
+			float pixNoise = c->getNoise(x, y);
+			glBegin(GL_POINTS);
+			glColor3f(pixNoise, pixNoise, pixNoise);
+			glVertex2i(x, y);
+			glEnd();
+		}
+	}
 
-	/* Step 2: Set up arrays and draw them */
-	glDrawPixels(100, 100, GL_RGB, GL_FLOAT,noise);
-
-//	glDrawPixels(500, 500, GL_RGB, GL_FLOAT, (float**)t->pixels);
-
-	/* Disable the clients */
-	glDrawBuffer(GL_BACK);
 	glutSwapBuffers();
 	glFlush();
+}
 
+void display()
+{
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Split area by 2 every time until we cover the whole thing
+	//Calculate the midpoint at each step
+
+	//draw clouds from the list
+	for(int i = 0; i < cloudList.size(); i++)
+	{
+		Cloud * cloud = cloudList.at(i);
+		drawCloud(cloud);
+		
+	}
+
+	
 }
 
 /*redraw display*/
@@ -71,8 +88,11 @@ void idle()
 */
 int main(int argc, char **argv)
 {
+	
 	srand(time(NULL));
 	c = new Cloud();
+	cloudList.push_back(c);
+
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);
@@ -102,7 +122,6 @@ int main(int argc, char **argv)
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-  
     /* Start the main GLUT loop */
     /* NOTE: No code runs after this */
     glutMainLoop();
