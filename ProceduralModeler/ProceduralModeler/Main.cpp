@@ -69,27 +69,50 @@ void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 	calcMidpoints(midX, midY, rightX, rightY);
 }
 
-void drawCloud(Cloud * c)
+void drawClouds(float size)
 {
 	/* Draw clouds*/
+	//draw clouds from the list
+	
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
 
+	//for each pixel
 	for (int x = 0; x < 500; x++)
 	{
+
 		for (int y = 0; y < 500; y++)
 		{
-			float pixNoise = c->getNoise(x, y);
+			float pixColor = 0.0;
+			float zoom = 256.0;
+			float darkness = 0.5;
+			//add all clouds colors at the pixel
+			for (int i = 0; i < cloudList.size(); i++)
+			{
+				//get cloud
+				Cloud * cloud = cloudList.at(i);
+				//get smoothened and zoomed noise value
+				float pixNoise = c->smoothNoise(x / zoom, y / zoom);
+				//add to color but make the following clouds darker
+				pixColor += pixNoise/darkness;
+	
+				//zoom in
+				zoom /= 2.0;
+				//darken
+				darkness *= 2;
+			}
+			//draw the pixel
 			glBegin(GL_POINTS);
-			glColor3f(pixNoise, pixNoise, pixNoise);
+			glColor3f(pixColor/5, pixColor/5, pixColor/5);
 			glVertex2i(x, y);
 			glEnd();
 		}
 	}
 
+	//flush all changes
 	glutSwapBuffers();
 	glFlush();
 }
@@ -102,13 +125,8 @@ void display()
 	//Split area by 2 every time until we cover the whole thing
 	//Calculate the midpoint at each step
 
-	//draw clouds from the list
-	for(int i = 0; i < cloudList.size(); i++)
-	{
-		Cloud * cloud = cloudList.at(i);
-		drawCloud(cloud);
-		
-	}
+	/*draw clouds comment out for other tests*/
+	drawClouds(64.0);
 
 	
 }
@@ -129,6 +147,14 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 	t = new Terrain();
 	//create a new cloud and add it to the list of clouds
+	c = new Cloud();
+	cloudList.push_back(c);
+	c = new Cloud();
+	cloudList.push_back(c);
+	c = new Cloud();
+	cloudList.push_back(c);
+	c = new Cloud();
+	cloudList.push_back(c);
 	c = new Cloud();
 	cloudList.push_back(c);
 
