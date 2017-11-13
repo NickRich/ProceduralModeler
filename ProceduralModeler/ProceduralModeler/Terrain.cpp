@@ -44,7 +44,6 @@ float Terrain::generateMidpoint(float a, float b, float r)
 	//pass in y(a) as a and y(b) as b, r is randomOffset
 	//return (y(a)+y(b))/2 + r
 	float retValue = ((a + b) / 2 + r);
-	//float retValue = (a + b) / 2.0;
 	return retValue;
 }
 
@@ -62,6 +61,19 @@ void Terrain::makePicture()
 	{
 		pixels[i][(int)floor(heights[i])] = 1.0;
 	}
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < 500; j++)
+		{
+			if (pixels[i][j] == 1)
+			{
+				for (int k = j; k < 500; k++)
+				{
+					pixels[i][k] = 1.0;
+				}
+			}
+		}
+	}
 }
 
 void Terrain::calcMidpoints(int leftX, int leftY, int rightX, int rightY)
@@ -70,7 +82,8 @@ void Terrain::calcMidpoints(int leftX, int leftY, int rightX, int rightY)
 	{
 		return;
 	}
-	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, .001);
+	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, 0.1);
+//	float r = Terrain::generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
 	float midY = Terrain::generateMidpoint(leftY, rightY, r);
 	int midX = (leftX + rightX) / 2;
 
@@ -89,13 +102,13 @@ void Terrain::generateEndpoints()
 	float rightEndpointY;
 	if (genMountains)
 	{
-		leftEndpointY = rand() % 500;
-		rightEndpointY = rand() % 500;
+		leftEndpointY = rand() % 300;
+		rightEndpointY = rand() % 300;
 	}
 	else
 	{
-		leftEndpointY = rand() % 100;
-		rightEndpointY = rand() % 100;
+		leftEndpointY = rand() % 100 + 300;
+		rightEndpointY = rand() % 100 + 300;
 	}
 	heights[0] = leftEndpointY;
 	heights[width] = rightEndpointY;
