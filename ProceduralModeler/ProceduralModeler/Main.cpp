@@ -24,95 +24,80 @@ Terrain * t;
 Cloud * c;
 vector<Cloud *> cloudList;
 bool generatingMountains = true;
+bool generatingDesert = false;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
 int leftEndpointX = 0; //Holds value for least x position (start of screen)
-int rightEndpointX = 499; //Holds value highest x position (width of screen)
-float roughnessFactor; //Roughness Factor for calculating random variable, defined by user
-int heights[500]; //used to store heights for each 
+int rightEndpointX = 500; //Holds value highest x position (width of screen)
+float roughnessFactor = 0.1; //Roughness Factor for calculating random variable, defined by user
 
-GLuint cloudTex;
-GLuint fragmentShader = 0;
-
-void generateEndpoints()
+void drawTerrain()
 {
-	//These numbers are by no means set in stone,
-	//I'm just trying to get my thoughts in order
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
 
-	if (generatingMountains)
+	for (int i = 0; i < 500; i++)
 	{
-		leftEndpointY = rand() % 500;
-		rightEndpointY = rand() % 500;
+		for (int j = 0; j < 500; j++)
+		{
+			float pixNoise = t->pixels[i][j];
+			glBegin(GL_POINTS);
+			if (pixNoise == 1.0) {
+				if (j < 100)
+				{
+					glColor3f(1.0, 1.0, 1.0);
+				}
+				else if (j < 250)
+				{
+					glColor3f(0.5, 0.5, 0.5);
+				}
+				else
+				{
+					if (generatingDesert)
+					{
+						glColor3f(0.86, 0.58, 0.44);
+					}
+					else {
+						glColor3f(0.0, 1.0, 0.0);
+					}
+				}
+			}
+			else
+			{
+				glColor3f(0.0, 0.5, 0.8);
+			}
+			glVertex2i(i, j);
+			glEnd();
+		}
 	}
-	else
-	{
-		leftEndpointY = rand() % 100;
-		rightEndpointY = rand() % 100;
-	}
-	heights[leftEndpointX] = leftEndpointY;
-	heights[rightEndpointX] = rightEndpointY;
+
+	glutSwapBuffers();
+	glFlush();
 }
 
-void calcMidpoints(int leftX, int leftY, int rightX, int rightY)
-{
-	if (rightX - leftX <= 1)
-	{
-		return;
-	}
-	float r = t->generateRandomOffset(leftX, leftY, rightX, rightY, roughnessFactor);
-	float midY = t->generateMidpoint(leftY, rightY, r);
-	int midX = (leftX + rightX) / 2;
-
-	heights[midX] = midY;
-
-	calcMidpoints(leftX, leftY, midX, midY);
-	calcMidpoints(midX, midY, rightX, rightY);
-}
-
-void drawClouds(float size)
+void drawCloud(Cloud * c)
 {
 	/* Draw clouds*/
-	//draw clouds from the list
-	
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
 
-	//for each pixel
 	for (int x = 0; x < 500; x++)
 	{
-
 		for (int y = 0; y < 500; y++)
 		{
-			float pixColor = 0.0;
-			float zoom = 256.0;
-			float darkness = 0.5;
-			//add all clouds colors at the pixel
-			for (int i = 0; i < cloudList.size(); i++)
-			{
-				//get cloud
-				Cloud * cloud = cloudList.at(i);
-				//get smoothened and zoomed noise value
-				float pixNoise = c->smoothNoise(x / zoom, y / zoom);
-				//add to color but make the following clouds darker
-				pixColor += pixNoise/darkness;
-	
-				//zoom in
-				zoom /= 2.0;
-				//darken
-				darkness *= 2;
-			}
-			//draw the pixel
+			float pixNoise = c->getNoise(x, y);
 			glBegin(GL_POINTS);
-			glColor3f(pixColor/5, pixColor/5, pixColor/5);
+			glColor3f(pixNoise, pixNoise, pixNoise);
 			glVertex2i(x, y);
 			glEnd();
 		}
 	}
 
-	//flush all changes
 	glutSwapBuffers();
 	glFlush();
 }
@@ -125,9 +110,14 @@ void display()
 	//Split area by 2 every time until we cover the whole thing
 	//Calculate the midpoint at each step
 
-	/*draw clouds comment out for other tests*/
-	drawClouds(64.0);
-
+	//draw clouds from the list
+	for(int i = 0; i < cloudList.size(); i++)
+	{
+		Cloud * cloud = cloudList.at(i);
+		drawCloud(cloud);
+		
+	}
+	drawTerrain();
 	
 }
 
@@ -145,16 +135,6 @@ int main(int argc, char **argv)
 {
 	
 	srand(time(NULL));
-	t = new Terrain();
-	//create a new cloud and add it to the list of clouds
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
 	c = new Cloud();
 	cloudList.push_back(c);
 
@@ -163,17 +143,16 @@ int main(int argc, char **argv)
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("OpenGL/FreeGLUT - Example: Rendering a textured .obj model using shaders");
+    glutCreateWindow("CS 334 - Procedural Modeling");
 
 	srand(time(NULL));
-	t = new Terrain();
-	roughnessFactor = 1;
+	t = new Terrain(rightEndpointX, generatingMountains);
 
 	//need something to start with what kind of terrain we're generating
-	generateEndpoints();
-
-	//calculate values, sotre in array
-	calcMidpoints(leftEndpointX, leftEndpointY, rightEndpointX, rightEndpointY);
+	t->generateEndpoints();
+	//calculate values, store in array
+	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
+	t->makePicture();
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
