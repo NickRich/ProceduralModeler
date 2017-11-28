@@ -60,18 +60,6 @@ void Cloud::genNoise()
 		}
 	}  
 
-
-	//for (int x = 0; x < 500; x++)
-	//{
-	//	for (int y = 0; y < 500; y++)
-	//	{
-
-	//		noise[x][y] = smoothNoise(x,y);
-
-	//	}
-	//}
-
-	//printf("noise %f", noise[0][1]);
 }
 
 

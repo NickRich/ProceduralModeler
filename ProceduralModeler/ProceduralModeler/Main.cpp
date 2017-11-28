@@ -19,6 +19,7 @@ using namespace std;
 #include "GL/glut.h"
 #include "Cloud.h"
 #include "Terrain.h"
+#include "Tree.h"
 
 Terrain * t;
 Cloud * c;
@@ -125,6 +126,29 @@ void drawClouds()
 	glFlush();
 }
 
+void drawTrees()
+{
+	Tree * tree;
+	tree = new Tree(0.0, 0.0, 0.0);
+	tree->genTree(tree);
+	float angle = tree->angle;
+
+	float radius = tree->radiusBottom;
+	float height = tree->height;
+	GLUquadric *obj = gluNewQuadric();
+	glColor3f(0.5, 0.35, 0.1);
+	glPushMatrix();
+	glRotated(angle, 1.0, 0.0, 0.0);
+	gluCylinder(obj, radius, radius, height, 30, 30);
+	glPopMatrix();
+
+	glutSwapBuffers();
+	glFlush();
+	
+	
+
+}
+
 void display()
 {
 	glClearColor(0, 0, 0, 1);
@@ -134,8 +158,10 @@ void display()
 	//Calculate the midpoint at each step
 
 	/*Draw Clouds comment out if need be*/
-	drawClouds();
-	
+	//drawClouds();
+
+	//drawTerrain();
+	drawTrees();
 }
 
 /*redraw display*/
