@@ -5,7 +5,7 @@ class Tree
 {
 public:
 	Tree(float x, float y, float z);
-	Tree genTree(Tree * t);
+	Tree* genBranches(Tree * t);
 	~Tree();
 	float height;
 	float radiusTop;
@@ -16,6 +16,6 @@ public:
 	float z;
 	vector <Tree *> branches;
 	int trunk;
-	
+	int rl;
 };
 

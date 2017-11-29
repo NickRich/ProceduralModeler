@@ -24,6 +24,7 @@ using namespace std;
 Terrain * t;
 Cloud * c;
 vector<Cloud *> cloudList;
+vector<Tree *> treeList;
 bool generatingMountains = true;
 bool generatingDesert = false;
 int leftEndpointY; //Holds value for height of leftEndpoint
@@ -126,24 +127,48 @@ void drawClouds()
 	glFlush();
 }
 
-void drawTrees()
+void genTree()
 {
 	Tree * tree;
-	tree = new Tree(0.0, 0.0, 0.0);
-	tree->genTree(tree);
-	float angle = tree->angle;
+	tree = new Tree(0.1, 0.0, 0.0);
+	tree->genBranches(tree);
+	treeList.push_back(tree);
+}
 
-	float radius = tree->radiusBottom;
-	float height = tree->height;
-	GLUquadric *obj = gluNewQuadric();
-	glColor3f(0.5, 0.35, 0.1);
-	glPushMatrix();
-	glRotated(angle, 1.0, 0.0, 0.0);
-	gluCylinder(obj, radius, radius, height, 30, 30);
-	glPopMatrix();
+void drawTrees()
+{
+	//for each tree
+	for (int t = 0; t < treeList.size(); t++)
+	{
+		Tree * tree = treeList.at(t);
+		vector <Tree *> branchList = tree->branches;
+		
+		//for each branch in a tree
+		for (int a = 0; a < branchList.size(); a++)
+		{
+			Tree * branch = branchList.at(a);
+			float angle = branch->angle;
 
-	glutSwapBuffers();
-	glFlush();
+			float x = branch->x;
+			float y = branch->y;
+			float z = branch->z;
+
+			float radius = branch->radiusBottom;
+			float height = branch->height;
+			GLUquadric *obj = gluNewQuadric();
+			glColor3f(0.5, 0.35, 0.1);
+			glPushMatrix();
+			glRotated(angle,1,0,0);
+			glTranslatef(x,y,z);
+			gluCylinder(obj, radius, radius, height, 30, 30);
+			glPopMatrix();
+			
+
+		}
+		glutSwapBuffers();
+		glFlush();
+	}
+	
 	
 	
 
@@ -188,6 +213,9 @@ int main(int argc, char **argv)
 	cloudList.push_back(c);
 	c = new Cloud();
 	cloudList.push_back(c);
+
+	//generate a tree
+	genTree();
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
