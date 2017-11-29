@@ -146,20 +146,40 @@ void drawTrees()
 		//for each branch in a tree
 		for (int a = 0; a < branchList.size(); a++)
 		{
+			//get a branch
 			Tree * branch = branchList.at(a);
-			float angle = branch->angle;
 
+			//get angles
+			float angleX = branch->angleX;
+			float angleY = branch->angleY;
+			float angleZ = branch->angleZ;
+
+			//get location
 			float x = branch->x;
 			float y = branch->y;
 			float z = branch->z;
-
+			//get radius and height
 			float radius = branch->radiusBottom;
 			float height = branch->height;
+			//create a cylinder
 			GLUquadric *obj = gluNewQuadric();
+			//brown color
 			glColor3f(0.5, 0.35, 0.1);
 			glPushMatrix();
-			glRotated(angle,1,0,0);
-			glTranslatef(x,y,z);
+			
+			//position
+			glTranslatef(x, y, z);
+			
+			//rotate
+			//glTranslatef(0, y+height, 0);
+			
+			glRotated(angleX,1,0,0);
+			glRotated(angleY, 0, 1, 0);
+			glRotated(angleZ, 0, 0, 1);
+			
+			//glTranslatef(0, -(y +height), 0);
+		
+			
 			gluCylinder(obj, radius, radius, height, 30, 30);
 			glPopMatrix();
 			

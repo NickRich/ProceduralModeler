@@ -12,7 +12,9 @@ Tree::Tree(float x, float y, float z)
 	this->x = x;
 	this->y = y;
 	this->z = z;
-	angle = 80.0;
+	angleX = 90.0;
+	angleY = 0.0;
+	angleZ = 0.0;
 	height = 0.5;
 	radiusTop = 0.06;
 	radiusBottom = 0.06;
@@ -37,53 +39,62 @@ Tree *Tree::genBranches(Tree * t)
 	//if rl is one make a right branch, otherwise make a left
 	float bx = 0.0;
 	float by = 0.0;
-	Tree * branch;
-	if (rl == 0)
-	{
-		
-		bx = t->x + 4*t->radiusTop;
-		by = t->y;
-		float bz = t->z;
-		branch = new Tree(bx, by, bz);
-		branch->trunk = 0;
-		//branch->angle = rand() % 20 + 60;
-		branch->height = t->height;
-		branch->radiusTop = t->radiusTop;
-		branch->radiusBottom = t->radiusBottom;
-		branch->angle = rand() % 20 + 60;
-	}
-	else
-	{
+	float bz = 0.0;
+	//}
+	//make a left side branch
+	//else
+	//{
+		Tree * leftBranch;
+		//create a branch shifted left and on top of the previous
 		bx = t->x - t->radiusTop;
-		by = t->y + 2*t->height;
-		float bz = t->z;// 0.5 * ((rand() % 32768) / 32768.0);
-		branch = new Tree(bx, by, bz);
-		branch->trunk = 0;
-		//branch->angle = rand() % 20 + 60;
-		branch->height = t->height - 0.1;
-		branch->radiusTop -= 0.02;
-		branch->radiusBottom -= 0.01;
-	
-	}
-	
-	
+		by = t->y + t->height - 0.1;
+		bz = t->z;// 0.5 * ((rand() % 32768) / 32768.0);
+		leftBranch = new Tree(bx, by, bz);
+		leftBranch->trunk = 0;
+		//leftBranch->angleY = 50;
+		leftBranch->height = t->height - 0.1;
+		leftBranch->radiusTop -= 0.02;
+		leftBranch->radiusBottom -= 0.01;
+		branches.push_back(leftBranch);
 
-	if (rl == 1)
+	//}
+		
+		Tree * rightBranch;
+		//make a right side branch
+		/*if (t->rl == 0)
+		{*/
+		//create a branch shifted right and on top of the previous
+		bx = t->x + t->radiusTop;
+		by = t->y + t->height - 0.1;;
+		bz = t->z;
+		rightBranch = new Tree(bx, by, bz);
+		rightBranch->trunk = 0;
+		//rightBranch->angleY = -50;
+		rightBranch->height = t->height - 0.1;
+		rightBranch->radiusTop = leftBranch->radiusTop;
+		rightBranch->radiusBottom = leftBranch->radiusBottom;
+		branches.push_back(rightBranch);
+
+	
+	//make the other branch side next time
+	/*if (t->rl == 1)
 	{
-		rl = 0;
+		t->rl = 0;
 	}
 	else
 	{
-		rl = 1;
+		t->rl = 1;
 	}
-	branches.push_back(branch);
+	branches.push_back(branch);*/
 	
-	if (branch->height <= 0.4)
+	if (leftBranch->height <= 0.1 || rightBranch->height <= 0.1)
 	{
 		return t;
 	}
-	genBranches(branch);
 
+	//recurse on each branch
+	genBranches(leftBranch);
+	genBranches(rightBranch);
 	
 
 

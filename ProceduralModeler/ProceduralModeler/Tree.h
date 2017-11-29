@@ -10,7 +10,9 @@ public:
 	float height;
 	float radiusTop;
 	float radiusBottom;
-	float angle;
+	float angleX;
+	float angleY;
+	float angleZ;
 	float x;
 	float y;
 	float z;
