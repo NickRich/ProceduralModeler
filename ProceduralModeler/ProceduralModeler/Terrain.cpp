@@ -116,3 +116,98 @@ void Terrain::generateEndpoints()
 	heights[0] = leftEndpointY;
 	heights[width] = rightEndpointY;
 }
+
+void Terrain::generateEndpoints3D()
+{
+	for (int i = 0; i < 513; i++)
+	{
+		for (int j = 0; j < 513; j++)
+		{
+			terrain[i][j] = 0;
+		}
+	}
+	terrain[0][0] = (rand() % 500) / 100;
+	terrain[0][512] = (rand() % 500) / 100;
+}
+
+void Terrain::squareDivisionUp(int rightX, int rightZ, int downX, int downZ, int leftX, int leftZ)
+{
+	float height1 = terrain[rightZ][rightX];
+	float height2 = terrain[downZ][downX];
+	float height3 = terrain[leftZ][leftX];
+
+	float average = (height1 + height3) / 2;
+	terrain[leftZ][downX] = average;
+
+}
+
+void Terrain::squareDivisionRight(int downX, int downZ, int leftX, int leftZ, int upX, int upZ)
+{
+	float height1 = terrain[downZ][downX];
+	float height2 = terrain[leftZ][leftX];
+	float height3 = terrain[upZ][upX];
+
+	float average = (height1 + height3) / 2;
+	terrain[leftZ][downX] = average;
+}
+
+void Terrain::squareDivisionDown(int leftX, int leftZ, int upX, int upZ, int rightX, int rightZ)
+{
+	float height1 = terrain[leftZ][leftX];
+	float height2 = terrain[upZ][upX];
+	float height3 = terrain[rightZ][rightX];
+
+	float average = (height1 + height3) / 2;
+	terrain[rightZ][upX] = average;
+}
+
+void Terrain::squareDivisionLeft(int upX, int upZ, int rightX, int rightZ, int downX, int downZ)
+{
+	float height1 = terrain[upZ][upX];
+	float height2 = terrain[rightZ][rightX];
+	float height3 = terrain[downZ][downX];
+
+	float average = (height1 + height3) / 2;
+	terrain[rightZ][upX] = average;
+}
+
+//Use 4 corner points to calculate height
+void Terrain::diamondDivision(int bottomLeftX, int bottomLeftZ, int bottomRightX, int bottomRightZ, int topLeftX, int topLeftZ, int topRightX, int topRightZ)
+{
+	if (bottomRightX - bottomLeftX <= 1 || bottomLeftZ - topLeftZ <= 1) return;
+
+	float average = terrain[bottomLeftZ][bottomLeftX] + terrain[bottomRightZ][bottomRightX] + terrain[topLeftZ][topLeftX] + terrain[topRightZ][topRightX];
+	average /= 4;
+	int centerX = (bottomLeftX + bottomRightX) / 2;
+	int centerZ = (bottomLeftZ + topLeftZ) / 2;
+	terrain[centerX][centerZ] = average;
+	squareDivisionUp(topRightX, topRightZ, centerX, centerZ, topLeftX, topLeftZ);
+	squareDivisionRight(bottomRightX, bottomRightZ, centerX, centerZ, topRightX, topRightZ);
+	squareDivisionDown(bottomLeftX, bottomLeftZ, centerX, centerZ, bottomRightX, bottomRightZ);
+	squareDivisionLeft(topLeftX, topLeftZ, centerX, centerZ, bottomLeftX, bottomLeftZ);
+
+	int leftX = topLeftX;
+	int upZ = topLeftZ;
+	int rightX = bottomRightX;
+	int downZ = bottomRightZ;
+
+	//Up Left Corner
+	diamondDivision(leftX, centerZ, centerX, centerZ, topLeftX, topLeftZ, centerX, upZ);
+	//Up Right Corner
+	diamondDivision(centerX, centerZ, rightX, centerZ, centerX, upZ, topRightX, topRightZ);
+	//Bottom Right Corner
+	diamondDivision(centerX, downZ, bottomRightX, bottomRightZ, centerX, centerZ, rightX, centerZ);
+	//Bottom Left Corner
+	diamondDivision(bottomLeftX, bottomLeftZ, centerX, downZ, leftX, centerZ, centerX, centerZ);
+}
+
+void Terrain::printHeights()
+{
+	for (int i = 0; i < 500; i++)
+	{
+		for (int j = 0; j < 500; j++)
+		{
+			printf("terrain[%i][%i], %f\n", i, j, terrain[i][j]);
+		}
+	}
+}

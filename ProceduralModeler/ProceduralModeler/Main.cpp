@@ -29,11 +29,17 @@ int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
 int leftEndpointX = 0; //Holds value for least x position (start of screen)
 int rightEndpointX = 500; //Holds value highest x position (width of screen)
-float roughnessFactor = 0.1; //Roughness Factor for calculating random variable, defined by user
+float roughnessFactor = 0.08; //Roughness Factor for calculating random variable, defined by user
+
+int winHeight = 513;
+int winWidth = 513;
+int scale = 16;
+int cols = 513 / 16;
+int rows = 513 / 16;
 
 void drawTerrain()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
@@ -212,19 +218,62 @@ void drawClouds()
 	glFlush();
 }
 
+GLfloat myModelMat[4][4] =
+{
+	{1, 0, 0, 0},
+	{0, 1, 0, 0},
+	{0, 0, 1, 0},
+	{-17, -5, -10, 1}
+};
+
+float floorVertices[12] =
+{
+	-512, 0, -512,
+	-1, 0, 9,
+	9, 0, 9,
+	9, 0, -1
+};
+
+void drawTerrain3D()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(30, 1, 1, -300);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glLoadMatrixf((GLfloat *)myModelMat);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	for (int i = -rows; i < rows; i++)
+	{
+		for (int j = -cols; j < cols; j++)
+		{
+			glBegin(GL_TRIANGLES);
+			glVertex3f(i, t->terrain[i][j], j);
+			glVertex3f(i + 1, t->terrain[i+1][j], j);
+			glVertex3f(i, t->terrain[i][j+1], j + 1);
+			glEnd();
+		}
+	}
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glutSwapBuffers();
+	glFlush();
+}
+
 void display()
 {
 	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//Split area by 2 every time until we cover the whole thing
-	//Calculate the midpoint at each step
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	/*Draw Clouds comment out if need be*/
 	//drawClouds();
 
-	drawTerrain();
-	
+	//drawTerrain();
+	drawTerrain3D();
 }
 
 /*redraw display*/
@@ -254,7 +303,7 @@ int main(int argc, char **argv)
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
-    glutInitWindowSize(500, 500);
+    glutInitWindowSize(513, 513);
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("CS 334 - Procedural Modeling");
@@ -267,6 +316,10 @@ int main(int argc, char **argv)
 	//calculate values, store in array
 	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
 	t->makePicture();
+
+	t->generateEndpoints3D();
+	t->diamondDivision(0, 512, 512, 512, 0, 0, 512, 0);
+	//t->printHeights();
 
 	glutDisplayFunc(display);
 //	glutIdleFunc(idle);
