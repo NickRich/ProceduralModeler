@@ -119,15 +119,17 @@ void Terrain::generateEndpoints()
 
 void Terrain::generateEndpoints3D()
 {
-	for (int i = 0; i < 513; i++)
+	for (int i = 0; i < 1025; i++)
 	{
-		for (int j = 0; j < 513; j++)
+		for (int j = 0; j < 1025; j++)
 		{
 			terrain[i][j] = 0;
 		}
 	}
-	terrain[0][0] = (rand() % 500) / 100;
-	terrain[0][512] = (rand() % 500) / 100;
+	terrain[0][0] = rand() % 200;
+	terrain[0][1024] = rand() % 200;
+	terrain[1024][0] = rand() % 200;
+	terrain[1024][1024] = rand() % 200;
 }
 
 void Terrain::squareDivisionUp(int rightX, int rightZ, int downX, int downZ, int leftX, int leftZ)
@@ -171,10 +173,48 @@ void Terrain::squareDivisionLeft(int upX, int upZ, int rightX, int rightZ, int d
 	terrain[rightZ][upX] = average;
 }
 
+void Terrain::diamondSquare(int x1, int y1, int x2, int y2, float range, int level)
+{
+	if (level < 1) return;
+
+	for (int i = x1 + level; i < x2; i += level)
+	{
+		for (int j = y1 + level; j < y2; j += level)
+		{
+			float a = terrain[i - level][j - level];
+			float b = terrain[i][j - level];
+			float c = terrain[i - level][j];
+			float d = terrain[i][j];
+			float e = (a + b + c + d) / 4 + (rand() % 20 - 10) / 5;
+			terrain[i - level / 2][j - level / 2] = e;
+		}
+	}
+
+	for (int i = x1 + 2 * level; i < x2; i += level)
+	{
+		for (int j = y1 + 2 * level; j < y2; j += level)
+		{
+			float a = terrain[i - level][j - level];
+			float b = terrain[i][j - level];
+			float c = terrain[i - level][j];
+			float d = terrain[i][j];
+			float e = terrain[i - level / 2][j - level / 2];
+
+			float f = (a + c + e + terrain[i - 3 * level / 2][j - level / 2]) / 4;
+			float g = (a + b + e + terrain[i - level / 2][j - 3 * level / 2]) / 4;
+
+			terrain[i - level][j - level / 2] = f + (rand() % 20 - 10) / 5;
+			terrain[i - level / 2][j - level] = g + (rand() % 20 - 10) / 5;
+		}
+	}
+
+	diamondSquare(x1, y1, x2, y2, range / 2, level / 2);
+}
+
 //Use 4 corner points to calculate height
 void Terrain::diamondDivision(int bottomLeftX, int bottomLeftZ, int bottomRightX, int bottomRightZ, int topLeftX, int topLeftZ, int topRightX, int topRightZ)
 {
-	if (bottomRightX - bottomLeftX <= 1 || bottomLeftZ - topLeftZ <= 1) return;
+	if (bottomRightX - bottomLeftX <= 16 || bottomLeftZ - topLeftZ <= 16) return;
 
 	float average = terrain[bottomLeftZ][bottomLeftX] + terrain[bottomRightZ][bottomRightX] + terrain[topLeftZ][topLeftX] + terrain[topRightZ][topRightX];
 	average /= 4;

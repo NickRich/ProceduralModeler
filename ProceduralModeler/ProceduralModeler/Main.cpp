@@ -31,11 +31,15 @@ int leftEndpointX = 0; //Holds value for least x position (start of screen)
 int rightEndpointX = 500; //Holds value highest x position (width of screen)
 float roughnessFactor = 0.08; //Roughness Factor for calculating random variable, defined by user
 
-int winHeight = 513;
-int winWidth = 513;
-int scale = 16;
-int cols = 513 / 16;
-int rows = 513 / 16;
+int winHeight = 500;
+int winWidth = 500;
+int scale = 8;
+int cols = 1024 / scale;
+int rows = 1024 / scale;
+
+int lightX = 0;
+int lightY = 0;
+
 
 void drawTerrain()
 {
@@ -223,41 +227,51 @@ GLfloat myModelMat[4][4] =
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
-	{-17, -5, -10, 1}
+	{-500, -200, -1000, 1}
 };
 
-float floorVertices[12] =
-{
-	-512, 0, -512,
-	-1, 0, 9,
-	9, 0, 9,
-	9, 0, -1
-};
+GLfloat ambient[] = { 1.0f, 1.0f, 1.0f };
+GLfloat position[] = {-1.5f, 1.0f, -4.0f, 1.0f };
 
 void drawTerrain3D()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(30, 1, 1, -300);
+	gluPerspective(60, 1, 1, -100);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glLoadMatrixf((GLfloat *)myModelMat);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	for (int i = -rows; i < rows; i++)
+	glColor3f(0.137255, 0.556863, 0.137255);
+	for (int z = 1; z < rows; z++)
 	{
-		for (int j = -cols; j < cols; j++)
+		glBegin(GL_TRIANGLE_STRIP);
+		for (int x = 1; x < cols; x++)
 		{
-			glBegin(GL_TRIANGLES);
-			glVertex3f(i, t->terrain[i][j], j);
-			glVertex3f(i + 1, t->terrain[i+1][j], j);
-			glVertex3f(i, t->terrain[i][j+1], j + 1);
-			glEnd();
+			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
+			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
 		}
+		glEnd();
 	}
 
+	glColor3f(0.184314, 0.309804, 0.184314);
+	for (int z = 1; z < rows; z++)
+	{
+		glBegin(GL_TRIANGLE_STRIP);
+		for (int x = 1; x < cols; x++)
+		{
+			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
+			glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
+		}
+		glEnd();
+	}
+
+	glDisable(GL_LIGHT0);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glutSwapBuffers();
@@ -303,7 +317,7 @@ int main(int argc, char **argv)
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
-    glutInitWindowSize(513, 513);
+	glutInitWindowSize(winWidth, winHeight);
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("CS 334 - Procedural Modeling");
@@ -318,8 +332,15 @@ int main(int argc, char **argv)
 	t->makePicture();
 
 	t->generateEndpoints3D();
-	t->diamondDivision(0, 512, 512, 512, 0, 0, 512, 0);
-	//t->printHeights();
+	t->diamondSquare(0, 0, 1024, 1024, 0, 1024);
+	//t->diamondDivision(0, 512, 512, 512, 0, 0, 512, 0);
+//	t->printHeights();
+
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+
+	//glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	//glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	glutDisplayFunc(display);
 //	glutIdleFunc(idle);
