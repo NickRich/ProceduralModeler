@@ -18,6 +18,8 @@ public:
 	float z;
 	vector <Tree *> branches;
 	int trunk;
+	float xShift;
 	int rl;
+	float leftWidth;
 };
 

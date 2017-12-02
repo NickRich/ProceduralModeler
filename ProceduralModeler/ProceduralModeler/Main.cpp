@@ -130,7 +130,7 @@ void drawClouds()
 void genTree()
 {
 	Tree * tree;
-	tree = new Tree(0.1, 0.0, 0.0);
+	tree = new Tree(0.0, 0.0, 0.0);
 	tree->genBranches(tree);
 	treeList.push_back(tree);
 }
@@ -159,28 +159,32 @@ void drawTrees()
 			float y = branch->y;
 			float z = branch->z;
 			//get radius and height
-			float radius = branch->radiusBottom;
+			float radiusB = branch->radiusBottom;
+			float radiusT = branch->radiusTop;
 			float height = branch->height;
 			//create a cylinder
 			GLUquadric *obj = gluNewQuadric();
 			//brown color
 			glColor3f(0.5, 0.35, 0.1);
+			//if smallest branch, make it a leaf
+			if (branch->height <= 0.3)
+			{
+				glColor3f(0.5, 0.6 , 0.1);
+			}
+			
 			glPushMatrix();
-			
+
 			//position
-			glTranslatef(x, y, z);
-			
-			//rotate
-			//glTranslatef(0, y+height, 0);
-			
-			glRotated(angleX,1,0,0);
+			glTranslatef(x, y -1 , z);
+
+			//flip
+			glScalef(1.0f, -1.0f, 1.0f);
+
+			glRotated(angleX, 1, 0, 0);
 			glRotated(angleY, 0, 1, 0);
 			glRotated(angleZ, 0, 0, 1);
-			
-			//glTranslatef(0, -(y +height), 0);
-		
-			
-			gluCylinder(obj, radius, radius, height, 30, 30);
+
+			gluCylinder(obj, radiusB, radiusT, height, 30, 30);
 			glPopMatrix();
 			
 
