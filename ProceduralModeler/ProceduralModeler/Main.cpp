@@ -127,16 +127,35 @@ void drawClouds()
 	glFlush();
 }
 
-void genTree()
+void genTree(float x, float y, float z)
 {
 	Tree * tree;
-	tree = new Tree(0.0, 0.0, 0.0);
+	tree = new Tree(x, y, z);
 	tree->genBranches(tree);
 	treeList.push_back(tree);
 }
 
 void drawTrees()
 {
+	//set up lighting effects
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Create light components
+	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
+	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
+	float position[] = { 1, 1, 0.0, 1.0 };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
 	//for each tree
 	for (int t = 0; t < treeList.size(); t++)
 	{
@@ -167,28 +186,50 @@ void drawTrees()
 			//brown color
 			glColor3f(0.5, 0.35, 0.1);
 			//if smallest branch, make it a leaf
-			if (branch->height <= 0.3)
+			if (branch->height <= 0.0)
 			{
+				glPushMatrix();
+
+				//position just above tallest branches
+				glTranslatef(x, y - 1 + 0.1, z);
+
+				//flip
+				glScalef(1.0f, -1.0f, 1.0f);
 				glColor3f(0.5, 0.6 , 0.1);
+				
+				glRotated(angleX, 1, 0, 0);
+				glRotated(angleY, 0, 1, 0);
+				glRotated(angleZ, 0, 0, 1);
+
+				//make leaves as spheres
+				gluSphere(obj, 20*radiusB, 30, 30);
+				glPopMatrix();
 			}
-			
-			glPushMatrix();
+			//if tall enough make a branch
+			else
+			{
 
-			//position
-			glTranslatef(x, y -1 , z);
+				glPushMatrix();
 
-			//flip
-			glScalef(1.0f, -1.0f, 1.0f);
+				//position
+				glTranslatef(x, y - 1, z);
 
-			glRotated(angleX, 1, 0, 0);
-			glRotated(angleY, 0, 1, 0);
-			glRotated(angleZ, 0, 0, 1);
+				//flip
+				glScalef(1.0f, -1.0f, 1.0f);
 
-			gluCylinder(obj, radiusB, radiusT, height, 30, 30);
-			glPopMatrix();
-			
+				glRotated(angleX, 1, 0, 0);
+				glRotated(angleY, 0, 1, 0);
+				glRotated(angleZ, 0, 0, 1);
+
+				//tappered cylinder 
+				gluCylinder(obj, radiusB, radiusT, height, 30, 30);
+				glPopMatrix();
+			}
 
 		}
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
 		glutSwapBuffers();
 		glFlush();
 	}
@@ -239,7 +280,7 @@ int main(int argc, char **argv)
 	cloudList.push_back(c);
 
 	//generate a tree
-	genTree();
+	genTree(0.0,0.0,0.0);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);

@@ -59,16 +59,15 @@ Tree *Tree::genBranches(Tree * t)
 		//set up the left branch
 		
 		//create a branch shifted left and on top of the previous
-		bx = t->x - xShift;//*leftWidth;
+		bx = t->x - sin(t->angleY)*t->height / 2;
 		by = t->y + t->height -0.2*t->height;
 		bz = t->z;// 0.5 * ((rand() % 32768) / 32768.0);
-		
-		bx = t->x - sin(t->angleY)*t->height/2;
 
-	//	by = (by)*sin(t->angleY) + (t->x)*cos(t->angleY);//+ t->height - 0.2;
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
 		leftBranch->angleY = -30;
+		//leftBranch->angleY = (rand() % 20 + 20);
+		//leftBranch->x -= t->x - sin(leftBranch->angleY)*t->height / 2;
 		leftBranch->height = t->height - 0.1;
 		leftBranch->radiusTop = t->radiusTop - 0.4 * t->radiusTop;
 		leftBranch->radiusBottom = t->radiusBottom - 0.3*t->radiusBottom;
@@ -76,14 +75,14 @@ Tree *Tree::genBranches(Tree * t)
 
 		//set up right branch
 	
-		bx = t->x - xShift;// *leftWidth;
+		bx = t->x + sin(t->angleY)*t->height / 2;
 		by = t->y + t->height -0.2*t->height;
-		bz = t->z;
-		bx = t->x + sin(t->angleY)*t->height/2;
-		//by = (by)*sin(t->angleY) + (t->x)*cos(t->angleY);//+ t->height - 0.2;
+		bz = t->z;	
+
 		rightBranch = new Tree(bx, by, bz);
 		rightBranch->trunk = 0;
-		rightBranch->angleY = 30;
+		rightBranch->angleY = -leftBranch->angleY;// 30;
+		//rightBranch->x -= t->x + sin(rightBranch->angleY)*t->height / 2;
 		rightBranch->height = t->height - 0.1;
 		rightBranch->radiusTop = leftBranch->radiusTop;
 		rightBranch->radiusBottom = leftBranch->radiusBottom;
@@ -97,31 +96,29 @@ Tree *Tree::genBranches(Tree * t)
 	{
 		//set up the left branch
 		//create a branch shifted left and on top of the previous
-		bx = t->x + xShift;
+		bx = t->x - sin(t->angleY)*t->height / 2;
 		by = t->y + t->height -0.2*t->height;
-		bz = t->z;//((rand() - 32768) / 32768.0);
-		//by = (by)*sin(t->angleY) + (t->x)*cos(t->angleY);//+ t->height - 0.2;
-		bx = t->x - sin(t->angleY)*t->height/2;
+		bz = t->z;// +((rand() - 32768) / 32768.0);
+		
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
 		leftBranch->angleY = -30;
+		//leftBranch->angleY = (rand() % 20 + 20);
+		//leftBranch->x -= t->x - sin(leftBranch->angleY)*t->height / 2;
+		leftBranch->angleZ = 60;
 		leftBranch->height = t->height - 0.1;
 		leftBranch->radiusTop = t->radiusTop - 0.4 * t->radiusTop;
 		leftBranch->radiusBottom = t->radiusBottom - 0.3*t->radiusBottom;
 		branches.push_back(leftBranch);
 
 		//set up right branch
-		bx = t->x + xShift;
-		by = t->y + t->height -0.2*t->height;
-		//bx = (t->x) *cos(t->angleY) - (t->y) *sin(t->angleY);//+ xShift;
-		//by = (by) *sin(t->angleY) + (bx)*cos(t->angleX);//+ t->height - 0.2;
-		
-		bx = t->x + sin(t->angleY)*t->height/2;
-		
+		bx = t->x + sin(t->angleY)*t->height / 2;
+		by = t->y + t->height -0.2*t->height;		
 		bz = t->z;
 		rightBranch = new Tree(bx, by, bz);
 		rightBranch->trunk = 0;
-		rightBranch->angleY = 30;
+		rightBranch->angleY = -leftBranch->angleY;//30;
+		//rightBranch->x -= t->x + sin(rightBranch->angleY)*t->height / 2;
 		rightBranch->height = t->height - 0.1;
 		rightBranch->radiusTop = leftBranch->radiusTop;
 		rightBranch->radiusBottom = leftBranch->radiusBottom;
@@ -132,19 +129,7 @@ Tree *Tree::genBranches(Tree * t)
 
 	}
 	
-	//shift branches for next iterations
-	xShift = t->radiusBottom + t->radiusBottom;
-	//if (leftWidth == 0)
-	//{//shift left a little more since x,y are the right point of the cylinder
-	//	leftWidth = 2;
-	//}
-	//else
-	//{
-	//	leftWidth -= 0.03;
-	//}
-
-
-	if (leftBranch->height <= 0.2 || rightBranch->height <= 0.2)
+	if (leftBranch->height <= 0.0 || rightBranch->height <= 0.0)
 	{
 		return t;
 	}
