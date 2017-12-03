@@ -16,13 +16,7 @@ public:
 
 	float terrain[1025][1025];
 	void generateEndpoints3D();
-	void squareDivisionUp(int rightX, int rightZ, int downX, int downZ, int leftX, int leftZ);
-	void squareDivisionRight(int downX, int downZ, int leftX, int leftZ, int upX, int upZ);
-	void squareDivisionDown(int leftX, int leftZ, int upX, int upZ, int rightX, int rightZ);
-	void squareDivisionLeft(int upX, int upZ, int rightX, int rightZ, int downX, int downZ);
-
-	void diamondSquare(int x1, int y1, int x2, int y2, float range, int level);
-
-	void diamondDivision(int bottomLeftX, int bottomLeftZ, int bottomRightX, int bottomRightZ, int topLeftX, int topLeftZ, int topRightX, int topRightZ);
+	float Terrain::Offset3D(int aX, int aY, int aZ, int bX, int bY, int bZ, float s);
+	void TerrainGenerate(int range);
 	void printHeights();
 };

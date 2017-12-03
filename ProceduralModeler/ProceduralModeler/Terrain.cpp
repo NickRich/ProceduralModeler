@@ -119,9 +119,9 @@ void Terrain::generateEndpoints()
 
 void Terrain::generateEndpoints3D()
 {
-	for (int i = 0; i < 1025; i++)
+	for (int i = 0; i < 513; i++)
 	{
-		for (int j = 0; j < 1025; j++)
+		for (int j = 0; j < 513; j++)
 		{
 			terrain[i][j] = 0;
 		}
@@ -132,113 +132,87 @@ void Terrain::generateEndpoints3D()
 	terrain[1024][1024] = rand() % 200;
 }
 
-void Terrain::squareDivisionUp(int rightX, int rightZ, int downX, int downZ, int leftX, int leftZ)
+float Terrain::Offset3D(int aX, int aY, int aZ, int bX, int bY, int bZ, float s)
 {
-	float height1 = terrain[rightZ][rightX];
-	float height2 = terrain[downZ][downX];
-	float height3 = terrain[leftZ][leftX];
+	float x1;
+	float x2;
+	float x3;
+	float w;
 
-	float average = (height1 + height3) / 2;
-	terrain[leftZ][downX] = average;
-
-}
-
-void Terrain::squareDivisionRight(int downX, int downZ, int leftX, int leftZ, int upX, int upZ)
-{
-	float height1 = terrain[downZ][downX];
-	float height2 = terrain[leftZ][leftX];
-	float height3 = terrain[upZ][upX];
-
-	float average = (height1 + height3) / 2;
-	terrain[leftZ][downX] = average;
-}
-
-void Terrain::squareDivisionDown(int leftX, int leftZ, int upX, int upZ, int rightX, int rightZ)
-{
-	float height1 = terrain[leftZ][leftX];
-	float height2 = terrain[upZ][upX];
-	float height3 = terrain[rightZ][rightX];
-
-	float average = (height1 + height3) / 2;
-	terrain[rightZ][upX] = average;
-}
-
-void Terrain::squareDivisionLeft(int upX, int upZ, int rightX, int rightZ, int downX, int downZ)
-{
-	float height1 = terrain[upZ][upX];
-	float height2 = terrain[rightZ][rightX];
-	float height3 = terrain[downZ][downX];
-
-	float average = (height1 + height3) / 2;
-	terrain[rightZ][upX] = average;
-}
-
-void Terrain::diamondSquare(int x1, int y1, int x2, int y2, float range, int level)
-{
-	if (level < 1) return;
-
-	for (int i = x1 + level; i < x2; i += level)
+	do
 	{
-		for (int j = y1 + level; j < y2; j += level)
+		x1 = 2.0 * 0.001 * (float)(rand() % 1000) - 1.0;
+		x2 = 2.0 * 0.001 * (float)(rand() % 1000) - 1.0;
+		x3 = 2.0 * 0.001 * (float)(rand() % 1000) - 1.0;
+		w = x1 * x1 + x2 * x2;
+	} while (w >= 1.0);
+
+	float y1 = x1 * w;
+	float y2 = x2 * w;
+	float y3 = x3 * w;
+
+	float posX = abs((long)(bX - aX));
+	float posY = abs((long)(bY - aY));
+	float posZ = abs((long)(bZ - aZ));
+
+	float afterGauss = y1 * posX + y2 * posY + y3 * posZ;
+
+	return s * afterGauss;
+}
+
+void Terrain::TerrainGenerate(int range)
+{
+	/*
+	a---f---b
+	|       |
+	i   e   g
+	|       |
+	c---h---d
+	*/
+
+	if (range < 1) return;
+
+	for (int i = 0; i < 1024; i += range)
+	{
+		for (int j = 0; j < 1024; j += range)
 		{
-			float a = terrain[i - level][j - level];
-			float b = terrain[i][j - level];
-			float c = terrain[i - level][j];
-			float d = terrain[i][j];
-			float e = (a + b + c + d) / 4 + (rand() % 20 - 10) / 5;
-			terrain[i - level / 2][j - level / 2] = e;
+			float a = terrain[i][j];
+			float b = terrain[i][j + range];
+			float c = terrain[i + range][j];
+			float d = terrain[i + range][j + range];
+
+			int eZ = i + range / 2;
+			int eX = j + range / 2;
+
+			float e = (a + b + c + d) / 4;
+			terrain[eZ][eX] = e + Offset3D(j, a, i, j + range, d, i + range, .2);// +generateRandomOffset(j, a, j + range, d, .03);
+
+			int fX = eX;
+			int fZ = i;
+
+			int gX = j + range;
+			int gZ = eZ;
+
+			int hX = eX;
+			int hZ = i + range;
+
+			int iX = j;
+			int iZ = eZ;
+
+			float f = (a + b + e) / 3 + Offset3D(j, a, i, j + range, b, i, .2); // +generateRandomOffset(j, a, j + range, b, .03);
+			float g = (b + d + e) / 3 + Offset3D(j + range, b, i, j + range, d, i + range, .2);// +generateRandomOffset(i, b, i + range, d, .03);
+			float h = (d + c + e) / 3 + Offset3D(j, c, i + range, j + range, d, i + range, .2);// +generateRandomOffset(j, c, j + range, d, .03);
+			float iVal = (c + a + e) / 3 + Offset3D(j, a, i, j, c, i + range, .2);// +generateRandomOffset(i, a, i + range, c, .03);
+
+			terrain[fZ][fX] = f;
+			terrain[gZ][gX] = g;
+			terrain[hZ][hX] = h;
+			terrain[iZ][iX] = iVal;
+
 		}
 	}
 
-	for (int i = x1 + 2 * level; i < x2; i += level)
-	{
-		for (int j = y1 + 2 * level; j < y2; j += level)
-		{
-			float a = terrain[i - level][j - level];
-			float b = terrain[i][j - level];
-			float c = terrain[i - level][j];
-			float d = terrain[i][j];
-			float e = terrain[i - level / 2][j - level / 2];
-
-			float f = (a + c + e + terrain[i - 3 * level / 2][j - level / 2]) / 4;
-			float g = (a + b + e + terrain[i - level / 2][j - 3 * level / 2]) / 4;
-
-			terrain[i - level][j - level / 2] = f + (rand() % 20 - 10) / 5;
-			terrain[i - level / 2][j - level] = g + (rand() % 20 - 10) / 5;
-		}
-	}
-
-	diamondSquare(x1, y1, x2, y2, range / 2, level / 2);
-}
-
-//Use 4 corner points to calculate height
-void Terrain::diamondDivision(int bottomLeftX, int bottomLeftZ, int bottomRightX, int bottomRightZ, int topLeftX, int topLeftZ, int topRightX, int topRightZ)
-{
-	if (bottomRightX - bottomLeftX <= 16 || bottomLeftZ - topLeftZ <= 16) return;
-
-	float average = terrain[bottomLeftZ][bottomLeftX] + terrain[bottomRightZ][bottomRightX] + terrain[topLeftZ][topLeftX] + terrain[topRightZ][topRightX];
-	average /= 4;
-	int centerX = (bottomLeftX + bottomRightX) / 2;
-	int centerZ = (bottomLeftZ + topLeftZ) / 2;
-	terrain[centerX][centerZ] = average;
-	squareDivisionUp(topRightX, topRightZ, centerX, centerZ, topLeftX, topLeftZ);
-	squareDivisionRight(bottomRightX, bottomRightZ, centerX, centerZ, topRightX, topRightZ);
-	squareDivisionDown(bottomLeftX, bottomLeftZ, centerX, centerZ, bottomRightX, bottomRightZ);
-	squareDivisionLeft(topLeftX, topLeftZ, centerX, centerZ, bottomLeftX, bottomLeftZ);
-
-	int leftX = topLeftX;
-	int upZ = topLeftZ;
-	int rightX = bottomRightX;
-	int downZ = bottomRightZ;
-
-	//Up Left Corner
-	diamondDivision(leftX, centerZ, centerX, centerZ, topLeftX, topLeftZ, centerX, upZ);
-	//Up Right Corner
-	diamondDivision(centerX, centerZ, rightX, centerZ, centerX, upZ, topRightX, topRightZ);
-	//Bottom Right Corner
-	diamondDivision(centerX, downZ, bottomRightX, bottomRightZ, centerX, centerZ, rightX, centerZ);
-	//Bottom Left Corner
-	diamondDivision(bottomLeftX, bottomLeftZ, centerX, downZ, leftX, centerZ, centerX, centerZ);
+	TerrainGenerate(range / 2);
 }
 
 void Terrain::printHeights()

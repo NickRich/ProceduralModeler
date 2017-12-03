@@ -33,7 +33,7 @@ float roughnessFactor = 0.08; //Roughness Factor for calculating random variable
 
 int winHeight = 500;
 int winWidth = 500;
-int scale = 8;
+int scale = 4;
 int cols = 1024 / scale;
 int rows = 1024 / scale;
 
@@ -227,11 +227,13 @@ GLfloat myModelMat[4][4] =
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
-	{-500, -200, -1000, 1}
+	{-525, -200, -800, 1}
 };
 
-GLfloat ambient[] = { 1.0f, 1.0f, 1.0f };
-GLfloat position[] = {-1.5f, 1.0f, -4.0f, 1.0f };
+GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+GLfloat diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f};
+GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+GLfloat position[] = {-500.0f, -500.0f, -1000.0f, 1.0f };
 
 void drawTerrain3D()
 {
@@ -245,32 +247,58 @@ void drawTerrain3D()
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	glColor3f(0.137255, 0.556863, 0.137255);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	//glColor4f(0.137255, 0.556863, 0.137255, 1.0f);
+	//for (int z = 1; z < rows; z++)
+	//{
+	//	glBegin(GL_TRIANGLE_STRIP);
+	//	for (int x = 1; x < cols; x++)
+	//	{
+	//		glNormal3f(0.0f, 0.0f, 1.0f);
+	//		glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
+	//		glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+	//		glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
+	//	}
+	//	glEnd();
+	//}
+
+	//glColor4f(0.184314, 0.309804, 0.184314, 1.0f);
+	//for (int z = 1; z < rows; z++)
+	//{
+	//	glBegin(GL_TRIANGLE_STRIP);
+	//	for (int x = 1; x < cols; x++)
+	//	{
+	//		glNormal3f(0.0f, 0.0f, 1.0f);
+	//		glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+	//		glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
+	//		glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
+	//	}
+	//	glEnd();
+	//}
+
 	for (int z = 1; z < rows; z++)
 	{
-		glBegin(GL_TRIANGLE_STRIP);
+		glBegin(GL_LINES);
 		for (int x = 1; x < cols; x++)
 		{
-			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
-			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
+			glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
+			glVertex3f((x+1)*scale, t->terrain[z*scale][(x+1)*scale], z*scale);
 		}
 		glEnd();
 	}
 
-	glColor3f(0.184314, 0.309804, 0.184314);
 	for (int z = 1; z < rows; z++)
 	{
-		glBegin(GL_TRIANGLE_STRIP);
+		glBegin(GL_LINES);
 		for (int x = 1; x < cols; x++)
 		{
-			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
-			glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
+			glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
+			glVertex3f(x*scale, t->terrain[(z+1)*scale][x*scale], (z+1)*scale);
 		}
 		glEnd();
 	}
-
 	glDisable(GL_LIGHT0);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
@@ -326,21 +354,29 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	//need something to start with what kind of terrain we're generating
-	t->generateEndpoints();
+//	t->generateEndpoints();
 	//calculate values, store in array
-	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
-	t->makePicture();
+//	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
+//	t->makePicture();
 
 	t->generateEndpoints3D();
-	t->diamondSquare(0, 0, 1024, 1024, 0, 1024);
-	//t->diamondDivision(0, 512, 512, 512, 0, 0, 512, 0);
+	t->TerrainGenerate(1024);
 //	t->printHeights();
 
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_NORMALIZE);
 
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-	//glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glEnable(GL_LIGHTING);
+
+	GLfloat globalAmbient[] = { .2, .2, .2, .2 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+
+	glShadeModel(GL_SMOOTH);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glEnable(GL_LIGHT0);
 
 	glutDisplayFunc(display);
 //	glutIdleFunc(idle);
