@@ -13,4 +13,10 @@ public:
 	void calcMidpoints(int leftX, int leftY, int rightX, int rightY, float s);
 	void generateEndpoints();
 	void makePicture();
+
+	float terrain[1025][1025];
+	void generateEndpoints3D();
+	float Terrain::Offset3D(int aX, int aY, int aZ, int bX, int bY, int bZ, float s);
+	void TerrainGenerate(int range);
+	void printHeights();
 };
