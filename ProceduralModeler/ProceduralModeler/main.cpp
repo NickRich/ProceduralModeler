@@ -46,6 +46,12 @@ GLfloat modelMat[4][4] = {
 	{ 0, -1, -26, 1 }
 };
 
+GLfloat modelMatC[4][4] = {
+	{ 1, 0, 0, 0 },
+	{ 0, 1, 0, 0 },
+	{ 0, 0, 1, 0 },
+	{-500, -500, -1200, 1 }
+};
 
 void drawTerrain()
 {
@@ -53,6 +59,7 @@ void drawTerrain()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
+
 
 	for (int i = 0; i < 500; i++)
 	{
@@ -89,8 +96,8 @@ void drawTerrain()
 		}
 	}
 
-	glutSwapBuffers();
-	glFlush();
+	//glutSwapBuffers();
+	//glFlush();
 }
 
 void genTree(float x, float y, float z)
@@ -109,8 +116,8 @@ void drawTrees()
 	float zFar = 100.0;
 
 	//perspective projection
-	/* Clear the window */
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	///* Clear the window */
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(fovy, aspect, zNear, zFar);
@@ -213,15 +220,15 @@ void drawTrees()
 			}
 
 		}
-		
+		glScaled(1,1, 1);
 	}
 	
 	//disable lighting effects and flush buffers
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
-	glutSwapBuffers();
-	glFlush();
+	//glutSwapBuffers();
+	//glFlush();
 
 }
 
@@ -240,8 +247,8 @@ GLfloat myModelMat[4][4] =
 
 void drawTerrain3D()
 {
-	glClearColor(0.2, 0.6, 0.8, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(30, 1, 1, -500);
@@ -251,23 +258,7 @@ void drawTerrain3D()
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 
-	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
-
-	// Create light components
-	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
-	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	float position[] = { 500, 400, 1100, 1.0 };
-
-	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	int color;
 
@@ -319,11 +310,10 @@ void drawTerrain3D()
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	
-	glutSwapBuffers();
-	glFlush();
+	//
+	//glutSwapBuffers();
+	//glFlush();
 }
-
 
 void drawClouds()
 {
@@ -331,16 +321,23 @@ void drawClouds()
 	//draw clouds from the list
 	
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClearColor(0.2, 0.6, 0.8, 1.0);
+	/*glClear(GL_COLOR_BUFFER_BIT);*/
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
+	//gluPerspective(45, 1, 10, -10);
+	//
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+	//glLoadMatrixf((GLfloat *)modelMatC);
+	gluOrtho2D(0, 500, 500, 0);
+	glDisable(GL_DEPTH);
 
 	//for each pixel
-	for (int x = 0; x < 500; x++)
+	for (int x = 0; x < winWidth; x++)
 	{
 
-		for (int y = 0; y < 500; y++)
+		for (int y = 0; y < winHeight; y++)
 		{
 			float pixColor = 0.0;
 			float zoom = 256.0;
@@ -354,41 +351,57 @@ void drawClouds()
 				float pixNoise = c->smoothNoise(x / zoom, y / zoom);
 				//add to color but make the following clouds darker
 				pixColor += pixNoise/darkness;
-	
-				//zoom in
 				zoom /= 2.0;
 				//darken
 				darkness *= 2;
 			}
+			pixColor /= 5;
+			 
+			//pixColor -= 0.6;
+
 			//draw the pixel
 			glBegin(GL_POINTS);
-			glColor3f(pixColor/5, pixColor/5, pixColor/5);
+			glColor3f(1- 0.8 * pixColor,1-0.6 * pixColor, 1-0.2 *pixColor);
 			glVertex2i(x, y);
 			glEnd();
 		}
 	}
-
-	//flush all changes
-	glutSwapBuffers();
-	glFlush();
+	glEnable(GL_DEPTH);
 }
 
 void display()
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0.2, 0.6, 0.8, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//drawTerrain();
-	//drawTerrain3D();
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
-	//drawTerrain();
-//	drawTerrain3D();
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Create light components
+	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
+	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
+	float position[] = { 500, 400, 1100, 1.0 };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	/*Draw Clouds comment out if need be*/
-	//drawClouds();
+	drawClouds();
 
-	//drawTerrain3D();
+	//drawTerrain();
+    drawTerrain3D();
+
 	drawTrees();
+	//flush all changes
+	glutSwapBuffers();
+	glFlush();
 }
 
 /*redraw display*/
@@ -417,9 +430,14 @@ int main(int argc, char **argv)
 	cloudList.push_back(c);
 
 	//generate a tree
-	genTree(-0.2,0.0,20.0);
+	genTree(0.2,0.0,20.0);
 
 	genTree(0.2, 0.0, 25.0);
+
+	//generate a tree
+	genTree(0.5, 0.0, 20.9);
+
+	genTree(1, 0.0, 21.0);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);

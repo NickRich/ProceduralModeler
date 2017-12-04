@@ -44,7 +44,7 @@ float Cloud::smoothNoise(float x, float y)
 	value += (1 - decimalX) * (1 - decimalY) * noise[y2][x2];
 
 	return value;
-	
+
 }
 
 void Cloud::genNoise()
@@ -54,7 +54,7 @@ void Cloud::genNoise()
 	{
 		for (int y = 0; y < 500; y++)
 		{
-			
+			//get random noise
 			noise[x][y] = (rand() % 32768) / 32768.0;
 			
 		}

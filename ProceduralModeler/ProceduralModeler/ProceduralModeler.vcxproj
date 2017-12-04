@@ -74,7 +74,7 @@
     <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Cloud.h" />
+    <ClInclude Include="Cloud.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Terrain.h" />
   </ItemGroup>
