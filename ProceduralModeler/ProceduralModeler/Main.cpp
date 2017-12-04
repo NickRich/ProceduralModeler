@@ -35,9 +35,6 @@ float roughnessFactor = 0.1; //Roughness Factor for calculating random variable,
 int winWidth = 500;
 int winHeight = 500;
 
-int winWidth = 500;
-int winHeight = 500;
-
 int scale = 4;
 int rows = 1024 / scale;
 int cols = 1024 / scale;
@@ -550,129 +547,6 @@ void drawClouds()
 	glFlush();
 }
 
-GLfloat myModelMat[4][4] =
-{
-	{1, 0, 0, 0},
-	{0, 1, 0, 0},
-	{0, 0, 1, 0},
-	{-525, -200, -1200, 1}
-};
-
-//GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-//GLfloat diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f};
-//GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-//GLfloat position[] = {-500.0f, -500.0f, -1000.0f, 1.0f };
-
-void drawTerrain3D()
-{
-	glClearColor(0.2, 0.6, 0.8, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(30, 1, 1, -500);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glLoadMatrixf((GLfloat *)myModelMat);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-
-	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
-
-	// Create light components
-	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
-	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	float position[] = { 500, 400, 1100, 1.0 };
-
-	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-	int scale = 4;
-	int color;
-	int rows = 1024 / scale;
-	int cols = 1024 / scale;
-
-	for (int z = 1; z < rows; z++)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-		for (int x = 1; x < cols; x++)
-		{
-			color = rand() % 2;
-			if (color == 0)
-			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-			}
-			else if (color == 1)
-			{
-				glColor3f(0.184314, 0.309804, 0.184314);
-			}
-			glNormal3f(0.0f, 0.0f, 1.0f);
-			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
-			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
-		}
-		glEnd();
-	}
-
-	for (int z = 1; z < rows; z++)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-		for (int x = 1; x < cols; x++)
-		{
-			color = rand() % 2;
-			if (color == 0)
-			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-			}
-			else if (color == 1)
-			{
-				glColor3f(0.184314, 0.309804, 0.184314);
-			}
-			glNormal3f(0.0f, 0.0f, 1.0f);
-			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
-			glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
-		}
-		glEnd();
-	}
-
-	//for (int z = 1; z < rows; z++)
-	//{
-	//	glBegin(GL_LINES);
-	//	for (int x = 1; x < cols; x++)
-	//	{
-	//		glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
-	//		glVertex3f((x+1)*scale, t->terrain[z*scale][(x+1)*scale], z*scale);
-	//	}
-	//	glEnd();
-	//}
-
-	//for (int z = 1; z < rows; z++)
-	//{
-	//	glBegin(GL_LINES);
-	//	for (int x = 1; x < cols; x++)
-	//	{
-	//		glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
-	//		glVertex3f(x*scale, t->terrain[(z+1)*scale][x*scale], (z+1)*scale);
-	//	}
-	//	glEnd();
-	//}
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	
-	glutSwapBuffers();
-	glFlush();
-}
-
 void display()
 {
 	glClearColor(0, 0, 0, 1);
@@ -687,8 +561,8 @@ void display()
 	/*Draw Clouds comment out if need be*/
 	//drawClouds();
 
-	//drawTerrain3D();
-	drawTrees();
+	drawTerrain3D();
+	//drawTrees();
 }
 
 /*redraw display*/
