@@ -185,7 +185,7 @@ void Terrain::TerrainGenerate(int range)
 			int eX = j + range / 2;
 
 			float e = (a + b + c + d) / 4;
-			terrain[eZ][eX] = e + Offset3D(j, a, i, j + range, d, i + range, .2);// +generateRandomOffset(j, a, j + range, d, .03);
+			terrain[eZ][eX] = e + Offset3D(j, a, i, j + range, d, i + range, .15);// +generateRandomOffset(j, a, j + range, d, .03);
 
 			int fX = eX;
 			int fZ = i;
@@ -199,10 +199,10 @@ void Terrain::TerrainGenerate(int range)
 			int iX = j;
 			int iZ = eZ;
 
-			float f = (a + b + e) / 3 + Offset3D(j, a, i, j + range, b, i, .2); // +generateRandomOffset(j, a, j + range, b, .03);
-			float g = (b + d + e) / 3 + Offset3D(j + range, b, i, j + range, d, i + range, .2);// +generateRandomOffset(i, b, i + range, d, .03);
-			float h = (d + c + e) / 3 + Offset3D(j, c, i + range, j + range, d, i + range, .2);// +generateRandomOffset(j, c, j + range, d, .03);
-			float iVal = (c + a + e) / 3 + Offset3D(j, a, i, j, c, i + range, .2);// +generateRandomOffset(i, a, i + range, c, .03);
+			float f = (a + b + e) / 3 + Offset3D(j, a, i, j + range, b, i, .15); // +generateRandomOffset(j, a, j + range, b, .03);
+			float g = (b + d + e) / 3 + Offset3D(j + range, b, i, j + range, d, i + range, .15);// +generateRandomOffset(i, b, i + range, d, .03);
+			float h = (d + c + e) / 3 + Offset3D(j, c, i + range, j + range, d, i + range, .15);// +generateRandomOffset(j, c, j + range, d, .03);
+			float iVal = (c + a + e) / 3 + Offset3D(j, a, i, j, c, i + range, .15);// +generateRandomOffset(i, a, i + range, c, .03);
 
 			terrain[fZ][fX] = f;
 			terrain[gZ][gX] = g;
