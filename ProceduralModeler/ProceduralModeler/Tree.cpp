@@ -61,7 +61,7 @@ Tree *Tree::genBranches(Tree * t)
 		//create a branch shifted left and on top of the previous
 		bx = t->x - sin(t->angleY)*t->height / 2;
 		by = t->y + t->height -0.2*t->height;
-		bz = t->z;// 0.5 * ((rand() % 32768) / 32768.0);
+		bz = t->z;
 
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
@@ -77,7 +77,7 @@ Tree *Tree::genBranches(Tree * t)
 	
 		bx = t->x + sin(t->angleY)*t->height / 2;
 		by = t->y + t->height -0.2*t->height;
-		bz = t->z;	
+		bz = t->z;
 
 		rightBranch = new Tree(bx, by, bz);
 		rightBranch->trunk = 0;
@@ -100,6 +100,7 @@ Tree *Tree::genBranches(Tree * t)
 		by = t->y + t->height -0.2*t->height;
 		bz = t->z;// +((rand() - 32768) / 32768.0);
 		
+
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
 		leftBranch->angleY = -30;

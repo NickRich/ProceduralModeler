@@ -33,6 +33,14 @@ int leftEndpointX = 0; //Holds value for least x position (start of screen)
 int rightEndpointX = 500; //Holds value highest x position (width of screen)
 float roughnessFactor = 0.1; //Roughness Factor for calculating random variable, defined by user
 
+GLfloat modelMat[4][4] = {
+	{ 1, 0, 0, 0 },
+	{ 0, 1, 0, 0 },
+	{ 0, 0, 1, 0 },
+	{ 0, -1, -26, 1 }
+};
+
+
 void drawTerrain()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -137,6 +145,23 @@ void genTree(float x, float y, float z)
 
 void drawTrees()
 {
+	float fovy = 90.0;
+	float aspect = 500.0 / 500.0;
+	float zNear = 1.0;
+	float zFar = 100.0;
+
+	//perspective projection
+	/* Clear the window */
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fovy, aspect, zNear, zFar);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glLoadMatrixf((GLfloat *)modelMat);
+
+
 	//set up lighting effects
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -145,16 +170,19 @@ void drawTrees()
 	glEnable(GL_COLOR_MATERIAL);
 
 	// Create light components
-	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
+	float ambientLight[] = { 0.8, 0.8, 0.8, 1.0 };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
 	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	float position[] = { 1, 1, 0.0, 1.0 };
+	float position[] = { 1.0, 1.0, 0.0, 1.0 };
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	
+
 
 	//for each tree
 	for (int t = 0; t < treeList.size(); t++)
@@ -227,15 +255,15 @@ void drawTrees()
 			}
 
 		}
-		glDisable(GL_LIGHT0);
-		glDisable(GL_LIGHTING);
-		glDisable(GL_COLOR_MATERIAL);
-		glutSwapBuffers();
-		glFlush();
+		
 	}
 	
-	
-	
+	//disable lighting effects and flush buffers
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glutSwapBuffers();
+	glFlush();
 
 }
 
@@ -280,7 +308,9 @@ int main(int argc, char **argv)
 	cloudList.push_back(c);
 
 	//generate a tree
-	genTree(0.0,0.0,0.0);
+	genTree(-0.2,0.0,20.0);
+
+	genTree(0.2, 0.0, 25.0);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
