@@ -35,7 +35,7 @@ float roughnessFactor = 0.1; //Roughness Factor for calculating random variable,
 int winWidth = 500;
 int winHeight = 500;
 
-int scale = 4;
+int scale = 1;
 int rows = 1024 / scale;
 int cols = 1024 / scale;
 
@@ -289,12 +289,9 @@ void drawTerrain3D()
 		glBegin(GL_TRIANGLE_STRIP);
 		for (int x = 1; x < cols; x++)
 		{
-			color = rand() % 2;
+			color = rand() % 5;
+			glColor3f(0.137255, 0.556863, 0.137255);
 			if (color == 0)
-			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-			}
-			else if (color == 1)
 			{
 				glColor3f(0.184314, 0.309804, 0.184314);
 			}
@@ -411,6 +408,20 @@ void display()
 //	glutPostRedisplay();
 //}
 
+void plantTrees()
+{
+	for (int z = 0; z < 1024; z++)
+	{
+		for (int x = 0; x < 1024; x++)
+		{
+			if (rand() % 800 == 0)
+			{
+				genTree(x/20 - 20, t->terrain[z][x]/100 - 10, z/20);
+			}
+		}
+	}
+}
+
 /**
 *    Main function
 */
@@ -430,14 +441,14 @@ int main(int argc, char **argv)
 	cloudList.push_back(c);
 
 	//generate a tree
-	genTree(0.2,0.0,20.0);
+	//genTree(0.2,0.0,20.0);
 
-	genTree(0.2, 0.0, 25.0);
+	//genTree(0.2, 0.0, 25.0);
 
 	//generate a tree
-	genTree(0.5, 0.0, 20.9);
+	//genTree(0.5, 0.0, 20.9);
 
-	genTree(1, 0.0, 21.0);
+	//genTree(1, 0.0, 21.0);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
@@ -449,18 +460,12 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 	t = new Terrain(rightEndpointX, generatingMountains);
 
-	//need something to start with what kind of terrain we're generating
-	t->generateEndpoints();
-	//calculate values, store in array
-	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
-	t->makePicture();
-
-	glutDisplayFunc(display);
-	//glutIdleFunc(idle);
-    glutCreateWindow("CS 334 - Procedural Modeling");
-
 	srand(time(NULL));
 	t = new Terrain(rightEndpointX, generatingMountains);
+	t->generateEndpoints3D();
+	t->TerrainGenerate(1024);
+
+	plantTrees();
 
 	//need something to start with what kind of terrain we're generating
 //	t->generateEndpoints();
@@ -468,8 +473,7 @@ int main(int argc, char **argv)
 //	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
 //	t->makePicture();
 
-	t->generateEndpoints3D();
-	t->TerrainGenerate(1024);
+
 //	t->printHeights();
 
 	glEnable(GL_NORMALIZE);
