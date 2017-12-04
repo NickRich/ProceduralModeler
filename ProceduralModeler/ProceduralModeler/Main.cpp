@@ -227,81 +227,117 @@ GLfloat myModelMat[4][4] =
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
-	{-525, -200, -800, 1}
+	{-525, -200, -1000, 1}
 };
 
-GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-GLfloat diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f};
-GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-GLfloat position[] = {-500.0f, -500.0f, -1000.0f, 1.0f };
+//GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+//GLfloat diffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f};
+//GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+//GLfloat position[] = {-500.0f, -500.0f, -1000.0f, 1.0f };
 
 void drawTerrain3D()
 {
+	glClearColor(0.2, 0.6, 0.8, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60, 1, 1, -100);
+	gluPerspective(90, 1, 1, -500);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glLoadMatrixf((GLfloat *)myModelMat);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);
 
-	//glColor4f(0.137255, 0.556863, 0.137255, 1.0f);
-	//for (int z = 1; z < rows; z++)
-	//{
-	//	glBegin(GL_TRIANGLE_STRIP);
-	//	for (int x = 1; x < cols; x++)
-	//	{
-	//		glNormal3f(0.0f, 0.0f, 1.0f);
-	//		glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
-	//		glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-	//		glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
-	//	}
-	//	glEnd();
-	//}
+	// Create light components
+	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
+	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
+	float position[] = { 500, 400, 1100, 1.0 };
 
-	//glColor4f(0.184314, 0.309804, 0.184314, 1.0f);
-	//for (int z = 1; z < rows; z++)
-	//{
-	//	glBegin(GL_TRIANGLE_STRIP);
-	//	for (int x = 1; x < cols; x++)
-	//	{
-	//		glNormal3f(0.0f, 0.0f, 1.0f);
-	//		glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
-	//		glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
-	//		glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
-	//	}
-	//	glEnd();
-	//}
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	int color;
 
 	for (int z = 1; z < rows; z++)
 	{
-		glBegin(GL_LINES);
+		glBegin(GL_TRIANGLE_STRIP);
 		for (int x = 1; x < cols; x++)
 		{
-			glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
-			glVertex3f((x+1)*scale, t->terrain[z*scale][(x+1)*scale], z*scale);
+			color = rand() % 2;
+			if (color == 0)
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+			}
+			else if (color == 1)
+			{
+				glColor3f(0.184314, 0.309804, 0.184314);
+			}
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
+			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
 		}
 		glEnd();
 	}
 
 	for (int z = 1; z < rows; z++)
 	{
-		glBegin(GL_LINES);
+		glBegin(GL_TRIANGLE_STRIP);
 		for (int x = 1; x < cols; x++)
 		{
-			glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
-			glVertex3f(x*scale, t->terrain[(z+1)*scale][x*scale], (z+1)*scale);
+			color = rand() % 2;
+			if (color == 0)
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+			}
+			else if (color == 1)
+			{
+				glColor3f(0.184314, 0.309804, 0.184314);
+			}
+			glNormal3f(0.0f, 0.0f, 1.0f);
+			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
+			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
+			glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
 		}
 		glEnd();
 	}
+
+	//for (int z = 1; z < rows; z++)
+	//{
+	//	glBegin(GL_LINES);
+	//	for (int x = 1; x < cols; x++)
+	//	{
+	//		glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
+	//		glVertex3f((x+1)*scale, t->terrain[z*scale][(x+1)*scale], z*scale);
+	//	}
+	//	glEnd();
+	//}
+
+	//for (int z = 1; z < rows; z++)
+	//{
+	//	glBegin(GL_LINES);
+	//	for (int x = 1; x < cols; x++)
+	//	{
+	//		glVertex3f(x*scale, t->terrain[z*scale][x*scale], z*scale);
+	//		glVertex3f(x*scale, t->terrain[(z+1)*scale][x*scale], (z+1)*scale);
+	//	}
+	//	glEnd();
+	//}
 	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
 	glDisableClientState(GL_VERTEX_ARRAY);
-
+	
 	glutSwapBuffers();
 	glFlush();
 }
@@ -365,18 +401,7 @@ int main(int argc, char **argv)
 
 	glEnable(GL_NORMALIZE);
 
-	glEnable(GL_LIGHTING);
 
-	GLfloat globalAmbient[] = { .2, .2, .2, .2 };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
-
-	glShadeModel(GL_SMOOTH);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-	glEnable(GL_LIGHT0);
 
 	glutDisplayFunc(display);
 //	glutIdleFunc(idle);
