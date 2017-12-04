@@ -227,7 +227,7 @@ GLfloat myModelMat[4][4] =
 	{1, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 0, 1, 0},
-	{-525, -200, -1000, 1}
+	{-525, -200, -1200, 1}
 };
 
 //GLfloat ambient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -241,7 +241,7 @@ void drawTerrain3D()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90, 1, 1, -500);
+	gluPerspective(30, 1, 1, -500);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glLoadMatrixf((GLfloat *)myModelMat);
