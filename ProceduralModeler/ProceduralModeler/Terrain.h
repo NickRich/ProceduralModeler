@@ -17,6 +17,6 @@ public:
 	float terrain[1025][1025];
 	void generateEndpoints3D();
 	float Terrain::Offset3D(int aX, int aY, int aZ, int bX, int bY, int bZ, float s);
-	void TerrainGenerate(int range);
+	void TerrainGenerate(int range, float roughness);
 	void printHeights();
 };

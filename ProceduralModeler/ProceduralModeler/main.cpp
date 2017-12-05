@@ -267,12 +267,9 @@ void drawTerrain3D()
 		glBegin(GL_TRIANGLE_STRIP);
 		for (int x = 1; x < cols; x++)
 		{
-			color = rand() % 2;
+			color = rand() % 5;
+			glColor3f(0.137255, 0.556863, 0.137255);
 			if (color == 0)
-			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-			}
-			else if (color == 1)
 			{
 				glColor3f(0.184314, 0.309804, 0.184314);
 			}
@@ -414,9 +411,9 @@ void plantTrees()
 	{
 		for (int x = 0; x < 1024; x++)
 		{
-			if (rand() % 800 == 0)
+			if (rand() % 100 == 0)
 			{
-				genTree(x/20 - 20, t->terrain[z][x]/100 - 10, z/20);
+				genTree(x/20 - 20, t->terrain[z][x]/60-10, z);
 			}
 		}
 	}
@@ -463,7 +460,7 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
-	t->TerrainGenerate(1024);
+	t->TerrainGenerate(1024, .05);
 
 	plantTrees();
 
