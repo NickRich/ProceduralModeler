@@ -268,10 +268,31 @@ void drawTerrain3D()
 		for (int x = 1; x < cols; x++)
 		{
 			color = rand() % 5;
-			glColor3f(0.137255, 0.556863, 0.137255);
-			if (color == 0)
+
+			if (generatingDesert)
 			{
-				glColor3f(0.184314, 0.309804, 0.184314);
+				glColor3f(0.86, 0.58, 0.44);
+				if (color == 0)
+				{
+					glColor3f(0.5, 0.35, 0.1);
+				}
+			}
+			else
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+				if (color == 0)
+				{
+					glColor3f(0.184314, 0.309804, 0.184314);
+				}
+
+				if (t->terrain[z * scale][(x + 1) * scale] > 150)
+				{
+					glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+				}
+				else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+				{
+					glColor3f(1.0, 1.0, 1.0);
+				}
 			}
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
@@ -287,10 +308,32 @@ void drawTerrain3D()
 		for (int x = 1; x < cols; x++)
 		{
 			color = rand() % 5;
-			glColor3f(0.137255, 0.556863, 0.137255);
-			if (color == 0)
+			if (generatingDesert)
 			{
-				glColor3f(0.184314, 0.309804, 0.184314);
+				glColor3f(0.86, 0.58, 0.44);
+				if (color == 0)
+				{
+					glColor3f(0.5, 0.35, 0.1);
+				}
+			}
+			else
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+				if (color == 0)
+				{
+					glColor3f(0.184314, 0.309804, 0.184314);
+				}
+				if (generatingMountains)
+				{
+					if (t->terrain[z * scale][(x + 1) * scale] > 150)
+					{
+						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+					}
+					else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+					{
+						glColor3f(1.0, 1.0, 1.0);
+					}
+				}
 			}
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
@@ -405,15 +448,18 @@ void display()
 //	glutPostRedisplay();
 //}
 
-void plantTrees()
+void plantTrees(int factor)
 {
 	for (int z = 0; z < 1024; z++)
 	{
 		for (int x = 0; x < 1024; x++)
 		{
-			if (rand() % 100 == 0)
+			if (rand() % factor == 0)
 			{
-				genTree(x/20 - 20, t->terrain[z][x]/60-10, z);
+				if (t->terrain[z][x] /60 - 10 < 150) 
+				{
+					genTree(x / 20 - 20, t->terrain[z][x] / 60 - 10, z);
+				}
 			}
 		}
 	}
@@ -458,11 +504,26 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	srand(time(NULL));
+	generatingMountains = false;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
-	t->TerrainGenerate(1024, .05);
+	generatingDesert = false;
+	int treeFactor = 100;
+	if (generatingDesert)
+	{
+		t->TerrainGenerate(1024, .07);
+	}
+	else if (generatingMountains)
+	{
+		t->TerrainGenerate(1024, .1);
+		plantTrees(100);
+	}
+	else
+	{
+		t->TerrainGenerate(1024, .05);
 
-	plantTrees();
+		plantTrees(100);
+	}
 
 	//need something to start with what kind of terrain we're generating
 //	t->generateEndpoints();
