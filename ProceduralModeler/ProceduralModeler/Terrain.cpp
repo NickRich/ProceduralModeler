@@ -126,8 +126,8 @@ void Terrain::generateEndpoints3D()
 			terrain[i][j] = 0;
 		}
 	}
-	terrain[0][0] = rand() % 200;
-	terrain[0][1024] = rand() % 200;
+	terrain[0][0] = rand() % 100 + 100;
+	terrain[0][1024] = rand() % 100 + 100;
 	if (genMountains)
 	{
 		terrain[0][0] += 200;

@@ -543,12 +543,12 @@ void display()
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	///*Draw Clouds comment out if need be*/
-	//drawClouds();
+	drawClouds();
 
 	////drawTerrain();
- //   drawTerrain3D();
+	drawTerrain3D();
 
-	//drawTrees();
+	drawTrees();
 
 	drawCactus();
 	//flush all changes
@@ -574,6 +574,23 @@ void plantTrees(int factor)
 				if (t->terrain[z][x] /60 - 10 < 150) 
 				{
 					genTree(x / 20 - 20, t->terrain[z][x] / 60 - 10, z);
+				}
+			}
+		}
+	}
+}
+
+void plantCacti(int factor)
+{
+	for (int z = 0; z < 1024; z++)
+	{
+		for (int x = 0; x < 1024; x++)
+		{
+			if (rand() % factor == 0)
+			{
+				if (t->terrain[z][x] / 60 - 10 < 150)
+				{
+					genCactus(x / 20 - 20, t->terrain[z][x] / 60 - 10, z);
 				}
 			}
 		}
@@ -609,7 +626,7 @@ int main(int argc, char **argv)
 	//genTree(1, 0.0, 21.0);
 
 	//generate a cactus
-	genCactus(0.2,0.0,22);
+	//genCactus(0.2,0.0,22);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
@@ -625,11 +642,12 @@ int main(int argc, char **argv)
 	generatingMountains = false;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
-	generatingDesert = false;
+	generatingDesert = true;
 	int treeFactor = 100;
 	if (generatingDesert)
 	{
-		t->TerrainGenerate(1024, .07);
+		t->TerrainGenerate(1024, .05);
+		plantCacti(800);
 	}
 	else if (generatingMountains)
 	{
@@ -638,7 +656,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		t->TerrainGenerate(1024, .05);
+		t->TerrainGenerate(1024, .03);
 
 		plantTrees(100);
 	}
