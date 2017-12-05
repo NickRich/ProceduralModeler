@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 using namespace std;
-class Tree
+class Cactus
 {
 public:
-	Tree(float x, float y, float z);
-	Tree* genBranches(Tree * t);
-	~Tree();
+	Cactus(float x, float y, float z);
+	Cactus * genBranches(Cactus*);
+	~Cactus();
 	float height;
 	float radiusTop;
 	float radiusBottom;
@@ -16,9 +16,8 @@ public:
 	float x;
 	float y;
 	float z;
-	vector <Tree *> branches;
+	vector <Cactus *> branches;
 	int trunk;
 	int rl;
-
 };
 

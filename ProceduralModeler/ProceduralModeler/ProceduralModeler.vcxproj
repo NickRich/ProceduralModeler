@@ -68,12 +68,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cactus.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cactus.h" />
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Terrain.h" />
