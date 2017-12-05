@@ -456,9 +456,7 @@ void drawTerrain3D()
 		glEnd();
 	}
 
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	//
 	//glutSwapBuffers();
@@ -551,6 +549,10 @@ void display()
 	drawTrees();
 
 	drawCactus();
+
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
 	//flush all changes
 	glutSwapBuffers();
 	glFlush();
@@ -639,10 +641,10 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	srand(time(NULL));
-	generatingMountains = false;
+	generatingMountains = true;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
-	generatingDesert = true;
+	generatingDesert = false;
 	int treeFactor = 100;
 	if (generatingDesert)
 	{
