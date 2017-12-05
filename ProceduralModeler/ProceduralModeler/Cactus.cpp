@@ -117,7 +117,7 @@ Cactus * Cactus::genBranches(Cactus * c)
 
 	
 
-	if (leftBranch1->height <= 0.0 || rightBranch1->height <= 0.2)
+	if (leftBranch1->height <= 0.4 || rightBranch1->height <= 0.4)
 	{
 		return c;
 	}

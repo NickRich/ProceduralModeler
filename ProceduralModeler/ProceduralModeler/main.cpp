@@ -152,7 +152,7 @@ void drawCactus()
 
 
 
-	//for each tree
+	//for each cactus
 	for (int t = 0; t < cactusList.size(); t++)
 	{
 		Cactus * cactus = cactusList.at(t);
@@ -195,8 +195,10 @@ void drawCactus()
 			glRotated(angleY, 0, 1, 0);
 			glRotated(angleZ, 0, 0, 1);
 
-			//tappered cylinder 
+			
+			gluSphere(obj, radiusB, 30, 30);
 			gluCylinder(obj, radiusB, radiusT, height, 30, 30);
+			
 			glPopMatrix();
 		
 
@@ -413,10 +415,10 @@ void drawTerrain3D()
 		glEnd();
 	}
 
-	glDisable(GL_LIGHT0);
+	/*glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_COLOR_MATERIAL);
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);*/
 	//
 	//glutSwapBuffers();
 	//glFlush();
@@ -500,15 +502,18 @@ void display()
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	///*Draw Clouds comment out if need be*/
-	//drawClouds();
+	drawClouds();
 
-	////drawTerrain();
- //   drawTerrain3D();
+	//drawTerrain();
+	drawTerrain3D();
 
-	//drawTrees();
+	drawTrees();
 
 	drawCactus();
 	//flush all changes
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
 	glutSwapBuffers();
 	glFlush();
 }
