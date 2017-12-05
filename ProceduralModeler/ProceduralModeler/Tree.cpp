@@ -23,19 +23,14 @@ Tree::Tree(float x, float y, float z)
 	radiusBottom = 0.06;
 	//if its the trunk
 	trunk = 1;
-	//horizontal branch shift
-	xShift = 0.0;
 	//if 1 then rightside, 0 then left side
 	rl = 0;
-	//width of cylinder used to shift over left side branches
-	leftWidth = 0;
+
 }
 
 Tree *Tree::genBranches(Tree * t)
 {
 	//if trunk, make a branch 
-	//modify branch to be smaller and thinner
-	//change position anlge to be random;
 	if (t->trunk == 1)
 	{
 		//add each tree segment to a list of braches
@@ -66,8 +61,7 @@ Tree *Tree::genBranches(Tree * t)
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
 		leftBranch->angleY = -30;
-		//leftBranch->angleY = (rand() % 20 + 20);
-		//leftBranch->x -= t->x - sin(leftBranch->angleY)*t->height / 2;
+	
 		leftBranch->height = t->height - 0.1;
 		leftBranch->radiusTop = t->radiusTop - 0.4 * t->radiusTop;
 		leftBranch->radiusBottom = t->radiusBottom - 0.3*t->radiusBottom;
@@ -104,8 +98,7 @@ Tree *Tree::genBranches(Tree * t)
 		leftBranch = new Tree(bx, by, bz);
 		leftBranch->trunk = 0;
 		leftBranch->angleY = -30;
-		//leftBranch->angleY = (rand() % 20 + 20);
-		//leftBranch->x -= t->x - sin(leftBranch->angleY)*t->height / 2;
+
 		leftBranch->angleZ = 60;
 		leftBranch->height = t->height - 0.1;
 		leftBranch->radiusTop = t->radiusTop - 0.4 * t->radiusTop;
