@@ -152,7 +152,7 @@ void drawCactus()
 
 
 
-	//for each cactus
+	//for each tree
 	for (int t = 0; t < cactusList.size(); t++)
 	{
 		Cactus * cactus = cactusList.at(t);
@@ -195,10 +195,8 @@ void drawCactus()
 			glRotated(angleY, 0, 1, 0);
 			glRotated(angleZ, 0, 0, 1);
 
-			
-			gluSphere(obj, radiusB, 30, 30);
+			//tappered cylinder 
 			gluCylinder(obj, radiusB, radiusT, height, 30, 30);
-			
 			glPopMatrix();
 		
 
@@ -383,10 +381,31 @@ void drawTerrain3D()
 		for (int x = 1; x < cols; x++)
 		{
 			color = rand() % 5;
-			glColor3f(0.137255, 0.556863, 0.137255);
-			if (color == 0)
+
+			if (generatingDesert)
 			{
-				glColor3f(0.184314, 0.309804, 0.184314);
+				glColor3f(0.86, 0.58, 0.44);
+				if (color == 0)
+				{
+					glColor3f(0.5, 0.35, 0.1);
+				}
+			}
+			else
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+				if (color == 0)
+				{
+					glColor3f(0.184314, 0.309804, 0.184314);
+				}
+
+				if (t->terrain[z * scale][(x + 1) * scale] > 150)
+				{
+					glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+				}
+				else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+				{
+					glColor3f(1.0, 1.0, 1.0);
+				}
 			}
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
@@ -402,10 +421,32 @@ void drawTerrain3D()
 		for (int x = 1; x < cols; x++)
 		{
 			color = rand() % 5;
-			glColor3f(0.137255, 0.556863, 0.137255);
-			if (color == 0)
+			if (generatingDesert)
 			{
-				glColor3f(0.184314, 0.309804, 0.184314);
+				glColor3f(0.86, 0.58, 0.44);
+				if (color == 0)
+				{
+					glColor3f(0.5, 0.35, 0.1);
+				}
+			}
+			else
+			{
+				glColor3f(0.137255, 0.556863, 0.137255);
+				if (color == 0)
+				{
+					glColor3f(0.184314, 0.309804, 0.184314);
+				}
+				if (generatingMountains)
+				{
+					if (t->terrain[z * scale][(x + 1) * scale] > 150)
+					{
+						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+					}
+					else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+					{
+						glColor3f(1.0, 1.0, 1.0);
+					}
+				}
 			}
 			glNormal3f(0.0f, 0.0f, 1.0f);
 			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
@@ -415,10 +456,8 @@ void drawTerrain3D()
 		glEnd();
 	}
 
-	/*glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-	glDisableClientState(GL_VERTEX_ARRAY);*/
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 	//
 	//glutSwapBuffers();
 	//glFlush();
@@ -504,16 +543,17 @@ void display()
 	///*Draw Clouds comment out if need be*/
 	drawClouds();
 
-	//drawTerrain();
+	////drawTerrain();
 	drawTerrain3D();
 
 	drawTrees();
 
 	drawCactus();
-	//flush all changes
 
-	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	//flush all changes
 	glutSwapBuffers();
 	glFlush();
 }
@@ -525,15 +565,35 @@ void display()
 //	glutPostRedisplay();
 //}
 
-void plantTrees()
+void plantTrees(int factor)
 {
 	for (int z = 0; z < 1024; z++)
 	{
 		for (int x = 0; x < 1024; x++)
 		{
-			if (rand() % 100 == 0)
+			if (rand() % factor == 0)
 			{
-				genTree(x/20 - 20, t->terrain[z][x]/60-10, z);
+				if (t->terrain[z][x] /60 - 10 < 150) 
+				{
+					genTree(x / 20 - 20, t->terrain[z][x] / 60 - 10, z);
+				}
+			}
+		}
+	}
+}
+
+void plantCacti(int factor)
+{
+	for (int z = 0; z < 1024; z++)
+	{
+		for (int x = 0; x < 1024; x++)
+		{
+			if (rand() % factor == 0)
+			{
+				if (t->terrain[z][x] / 60 - 10 < 150)
+				{
+					genCactus(x / 20 - 20, t->terrain[z][x] / 60 - 10, z);
+				}
 			}
 		}
 	}
@@ -568,7 +628,7 @@ int main(int argc, char **argv)
 	//genTree(1, 0.0, 21.0);
 
 	//generate a cactus
-	genCactus(0.2,0.0,22);
+	//genCactus(0.2,0.0,22);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
@@ -581,11 +641,27 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	srand(time(NULL));
+	generatingMountains = true;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
-	t->TerrainGenerate(1024, .05);
+	generatingDesert = false;
+	int treeFactor = 100;
+	if (generatingDesert)
+	{
+		t->TerrainGenerate(1024, .05);
+		plantCacti(800);
+	}
+	else if (generatingMountains)
+	{
+		t->TerrainGenerate(1024, .1);
+		plantTrees(100);
+	}
+	else
+	{
+		t->TerrainGenerate(1024, .03);
 
-	plantTrees();
+		plantTrees(100);
+	}
 
 	//need something to start with what kind of terrain we're generating
 //	t->generateEndpoints();
