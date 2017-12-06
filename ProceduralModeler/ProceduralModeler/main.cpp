@@ -343,7 +343,7 @@ void drawTerrain3D()
 	float ambientLight[] = { 0.6, 0.6, 0.6, lightBright };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
-	float position[] = { 0,100 , 1200, lightBright };
+	float position[] = { 500,300 , 1200, lightBright };
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -401,7 +401,7 @@ void drawTerrain3D()
 					}
 				}
 			}
-			glNormal3f(0.0f, 0.0f, 1.0f);
+			glNormal3f(1.0f, 0.0f, 1.0f);
 			glVertex3f(x *scale, t->terrain[z * scale][x * scale], z * scale);
 			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
 			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
@@ -457,7 +457,7 @@ void drawTerrain3D()
 					}
 				}
 			}
-			glNormal3f(0.0f, 0.0f, 1.0f);
+			glNormal3f(1.0f, 0.0f, 1.0f);
 			glVertex3f((x + 1) * scale, t->terrain[z * scale][(x + 1) * scale], z * scale);
 			glVertex3f(x * scale, t->terrain[(z + 1) * scale][x * scale], (z + 1) * scale);
 			glVertex3f((x + 1) * scale, t->terrain[(z + 1) * scale][(x + 1) * scale], (z + 1) * scale);
