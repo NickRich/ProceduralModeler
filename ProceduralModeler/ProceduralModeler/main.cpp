@@ -361,8 +361,15 @@ void drawTerrain3D()
 			color = rand() % 5;
 			if (generatingDesert)
 			{
-				glColor3f(0.86, 0.58, 0.44);
-				if (color == 0)
+				if (color == 0 || color == 1)
+				{
+					glColor3f(0.86, 0.58, 0.44);
+				}
+				else if (color == 2 || color == 3)
+				{
+					glColor3f(.59, .41, .31);
+				}
+				else
 				{
 					glColor3f(0.5, 0.35, 0.1);
 				}
@@ -410,8 +417,15 @@ void drawTerrain3D()
 			color = rand() % 5;
 			if (generatingDesert)
 			{
-				glColor3f(0.86, 0.58, 0.44);
-				if (color == 0)
+				if (color == 0 || color == 1)
+				{
+					glColor3f(0.86, 0.58, 0.44);
+				}
+				else if (color == 2 || color == 3)
+				{
+					glColor3f(.59, .41, .31);
+				}
+				else
 				{
 					glColor3f(0.5, 0.35, 0.1);
 				}
@@ -541,12 +555,9 @@ void display()
 		glClearColor(0.2, 0.6, 0.8, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
 		///*Draw Clouds comment out if need be*/
 		drawClouds();
 
-		////drawTerrain();
 		drawTerrain3D();
 
 		drawTrees();
@@ -700,7 +711,7 @@ void menu(int value)
 		cloudList.push_back(c);
 		c = new Cloud();
 		cloudList.push_back(c);
-		display();
+		glutPostRedisplay();
 	}
 }
 
@@ -764,22 +775,7 @@ void makeMenu()
 */
 int main(int argc, char **argv)
 {
-	
 	srand(time(NULL));
-
-
-	//generate a tree
-	//genTree(0.2,0.0,20.0);
-
-	//genTree(0.2, 0.0, 25.0);
-
-	//generate a tree
-	//genTree(0.5, 0.0, 20.9);
-
-	//genTree(1, 0.0, 21.0);
-
-	//generate a cactus
-	//genCactus(0.2,0.0,22);
 
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
