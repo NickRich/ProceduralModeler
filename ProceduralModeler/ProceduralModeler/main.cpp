@@ -359,7 +359,6 @@ void drawTerrain3D()
 		for (int x = 1; x < cols; x++)
 		{
 			color = rand() % 5;
-
 			if (generatingDesert)
 			{
 				glColor3f(0.86, 0.58, 0.44);
@@ -370,19 +369,29 @@ void drawTerrain3D()
 			}
 			else
 			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-				if (color == 0)
-				{
-					glColor3f(0.184314, 0.309804, 0.184314);
-				}
 
-				if (t->terrain[z * scale][(x + 1) * scale] > 150)
+				if (color == 0 || color == 1)
 				{
-					glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+					glColor3f(0.184314, 0.509804, 0.184314);
 				}
-				else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+				else if (color == 2)
 				{
-					glColor3f(1.0, 1.0, 1.0);
+					glColor3f(0.137255, 0.556863, 0.137255);
+				}
+				else if (color == 4 || color == 3)
+				{
+					glColor3f(0.419608, 0.556863, 0.137255);
+				}
+				if (generatingMountains)
+				{
+					if (t->terrain[z * scale][(x + 1) * scale] > 150)
+					{
+						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
+					}
+					else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+					{
+						glColor3f(1.0, 1.0, 1.0);
+					}
 				}
 			}
 			glNormal3f(0.0f, 0.0f, 1.0f);
@@ -409,10 +418,18 @@ void drawTerrain3D()
 			}
 			else
 			{
-				glColor3f(0.137255, 0.556863, 0.137255);
-				if (color == 0)
+
+				if (color == 0 || color == 1)
 				{
-					glColor3f(0.184314, 0.309804, 0.184314);
+					glColor3f(0.184314, 0.509804, 0.184314);
+				}
+				else if (color == 2)
+				{
+					glColor3f(0.137255, 0.556863, 0.137255);
+				}
+				else if (color == 4 || color == 3)
+				{
+					glColor3f(0.419608, 0.556863, 0.137255);
 				}
 				if (generatingMountains)
 				{
@@ -623,7 +640,7 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	srand(time(NULL));
-	generatingMountains = false;
+	generatingMountains = true;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
 	generatingDesert = true;
