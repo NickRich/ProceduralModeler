@@ -221,7 +221,7 @@ void drawTrees()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	//glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 
 	//for each tree
@@ -349,7 +349,7 @@ void drawTerrain3D()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	//glLightfv(GL_LIGHT0, GL_POSITION, position);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	int color;
 
@@ -555,14 +555,21 @@ void display()
 		glClearColor(0.2, 0.6, 0.8, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		///*Draw Clouds comment out if need be*/
 		drawClouds();
 
 		drawTerrain3D();
 
-		drawTrees();
+		if (generatingDesert)
+		{
+			drawCactus();
+		}
+		else
+		{
+			drawTrees();
+		}
 
-		drawCactus();
+
+
 
 
 		//flush all changes
@@ -587,7 +594,6 @@ void idle()
 	glutPostRedisplay();
 }
 
-
 int plantGen = 0;
 
 void plantTrees()
@@ -595,7 +601,7 @@ void plantTrees()
 	int factor = 0;
 	if (plantGen != 0)
 	{
-		factor = 800 - 200 * plantGen;
+		factor = 700 - 200 * plantGen;
 	}
 	for (int z = 0; z < 1024; z++)
 	{
@@ -783,8 +789,6 @@ int main(int argc, char **argv)
     glutInitWindowPosition(30, 30);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("CS 334 - Procedural Modeling");
-
-	srand(time(NULL));
 
 	glEnable(GL_NORMALIZE);
 
