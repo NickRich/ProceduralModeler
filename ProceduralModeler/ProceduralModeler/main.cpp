@@ -104,7 +104,7 @@ void drawCactus()
 	float ambientLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
-	float position[] = { 25.0 ,10.0, -70.0, lightBright };
+	float position[] = { -30.0 ,20.0, -70.0, lightBright };
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -215,7 +215,7 @@ void drawTrees()
 	float ambientLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
-	float position[] = { 25.0 ,10.0, -30.0, lightBright };
+	float position[] = { -30.0 ,20.0, -70.0, lightBright };
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -565,10 +565,6 @@ void display()
 		{
 			drawTrees();
 		}
-
-
-
-
 
 		//flush all changes
 
