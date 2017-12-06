@@ -543,21 +543,22 @@ void display()
 
 
 
-	///*Draw Clouds comment out if need be*/
-	drawClouds();
+		///*Draw Clouds comment out if need be*/
+		drawClouds();
 
-	////drawTerrain();
-   drawTerrain3D();
+		////drawTerrain();
+		drawTerrain3D();
 
 		drawTrees();
 
 		drawCactus();
 
-	
-	//flush all changes
 
-	glutSwapBuffers();
-	glFlush();
+		//flush all changes
+
+		glutSwapBuffers();
+		glFlush();
+	}
 }
 
 void keyboard(unsigned char k, int x, int y)
