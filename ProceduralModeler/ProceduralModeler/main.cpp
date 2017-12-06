@@ -27,7 +27,7 @@ Cloud * c;
 vector<Cloud *> cloudList;
 vector<Tree *> treeList;
 vector<Cactus *> cactusList;
-bool generatingMountains = true;
+bool generatingMountains = false;
 bool generatingDesert = false;
 int leftEndpointY; //Holds value for height of leftEndpoint
 int rightEndpointY; //Holds value for height of rightEndpoint
@@ -486,60 +486,81 @@ void drawClouds()
 	glEnable(GL_DEPTH);
 }
 
+bool terrainChosen = false;
 void display()
 {
-	glClearColor(0.2, 0.6, 0.8, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (terrainChosen)
+	{
+		glClearColor(0.2, 0.6, 0.8, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 
-	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		glEnable(GL_COLOR_MATERIAL);
 
-	// Create light components
-	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
-	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	float position[] = { 200, 200, 306, 1};
+		// Create light components
+		float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
+		float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
+		float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
+		float position[] = { 200, 200, 306, 1 };
 
-	// Assign created components to GL_LIGHT0
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightfv(GL_LIGHT0, GL_POSITION, position);
+		// Assign created components to GL_LIGHT0
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+		glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-	///*Draw Clouds comment out if need be*/
-	drawClouds();
+		///*Draw Clouds comment out if need be*/
+		drawClouds();
 
-	////drawTerrain();
-	drawTerrain3D();
+		////drawTerrain();
+		drawTerrain3D();
 
-	drawTrees();
+		drawTrees();
 
-	drawCactus();
+		drawCactus();
 
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-	//flush all changes
-	glutSwapBuffers();
-	glFlush();
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
+		//flush all changes
+		glutSwapBuffers();
+		glFlush();
+	}
+}
+
+void keyboard(unsigned char k, int x, int y)
+{
+	if (k == 27)
+	{
+		exit(0);
+	}
 }
 
 /*redraw display*/
-//void idle()
-//{
-//	/* Redraw the window */
-//	glutPostRedisplay();
-//}
-
-void plantTrees(int factor)
+void idle()
 {
+	/* Redraw the window */
+	glutPostRedisplay();
+}
+
+
+int plantGen = 0;
+
+void plantTrees()
+{
+	int factor = 0;
+	if (plantGen != 0)
+	{
+		factor = 800 - 200 * plantGen;
+	}
 	for (int z = 0; z < 1024; z++)
 	{
 		for (int x = 0; x < 1024; x++)
 		{
+			if (factor == 0) continue;
 			if (rand() % factor == 0)
 			{
 				if (t->terrain[z][x] /60 - 10 < 150) 
@@ -551,12 +572,19 @@ void plantTrees(int factor)
 	}
 }
 
-void plantCacti(int factor)
+void plantCacti()
 {
+	int factor = 0;
+	if (plantGen != 0)
+	{
+		factor = 1200 - 200 * plantGen;
+	}
+
 	for (int z = 0; z < 1024; z++)
 	{
 		for (int x = 0; x < 1024; x++)
 		{
+			if (factor == 0) continue;
 			if (rand() % factor == 0)
 			{
 				if (t->terrain[z][x] / 60 - 10 < 150)
@@ -568,6 +596,139 @@ void plantCacti(int factor)
 	}
 }
 
+int terrainID;
+int plantID;
+int menuID;
+float roughness = .03;
+
+void terrainSubmenu(int value)
+{
+	if (value == 0)
+	{
+		roughness = .03;
+		generatingDesert = generatingMountains = false;
+		terrainChosen = true;
+	}
+	else if (value == 1)
+	{
+		roughness = .1;
+		generatingMountains = true;
+		generatingDesert = false;
+		terrainChosen = true;
+	}
+	else
+	{
+		roughness = .05;
+		generatingMountains = false;
+		generatingDesert = true;
+		terrainChosen = true;
+	}
+	t = new Terrain(rightEndpointX, generatingMountains);
+	t->generateEndpoints3D();
+}
+
+void plantSubmenu(int value)
+{
+	treeList.clear();
+	cactusList.clear();
+	plantGen = value;
+}
+
+void menu(int value)
+{
+	if (value == 0)
+	{
+		exit(0);
+	}
+	else if (value == 1)
+	{
+
+		if (generatingDesert)
+		{
+
+			t->TerrainGenerate(1024, roughness);
+			plantCacti();
+		}
+		else if (generatingMountains)
+		{
+			t->TerrainGenerate(1024, roughness);
+			plantTrees();
+		}
+		else
+		{
+			t->TerrainGenerate(1024, roughness);
+			plantTrees();
+		}
+		cloudList.clear();
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		display();
+	}
+}
+
+void mouse(int button, int state, int x, int y)
+{
+	/* Show location of the mouse inside the window */
+	std::cout << "Mouse: (" << x << ", " << y << ")" << std::endl;
+
+	/* Show the button and the event on the mouse */
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		std::cout << "Mouse: Left button down" << std::endl;
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		std::cout << "Mouse: Left button up" << std::endl;
+	}
+	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN)
+	{
+		std::cout << "Mouse: Middle button down" << std::endl;
+	}
+	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_UP)
+	{
+		std::cout << "Mouse: Middle button up" << std::endl;
+	}
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+		std::cout << "Mouse: Right button down" << std::endl;
+	}
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+	{
+		std::cout << "Mouse: Right button up" << std::endl;
+	}
+}
+
+void makeMenu()
+{
+	terrainID = glutCreateMenu(terrainSubmenu);
+	glutAddMenuEntry("Generate Plains", 0);
+	glutAddMenuEntry("Generate Mountains", 1);
+	glutAddMenuEntry("Generate Desert", 2);
+
+	plantID = glutCreateMenu(plantSubmenu);
+	glutAddMenuEntry("None", 0);
+	glutAddMenuEntry("Sparse", 1);
+	glutAddMenuEntry("Medium", 2);
+	glutAddMenuEntry("Heavy", 3);
+
+	menuID = glutCreateMenu(menu);
+	glutAddSubMenu("Terrain Generation", terrainID);
+	glutAddSubMenu("Plant Density", plantID);
+	glutAddMenuEntry("Generate Terrain", 1);
+	glutAddMenuEntry("Exit", 0);
+
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+}
+
 /**
 *    Main function
 */
@@ -575,16 +736,7 @@ int main(int argc, char **argv)
 {
 	
 	srand(time(NULL));
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
-	c = new Cloud();
-	cloudList.push_back(c);
+
 
 	//generate a tree
 	//genTree(0.2,0.0,20.0);
@@ -607,43 +759,8 @@ int main(int argc, char **argv)
     glutCreateWindow("CS 334 - Procedural Modeling");
 
 	srand(time(NULL));
-	t = new Terrain(rightEndpointX, generatingMountains);
-
-	srand(time(NULL));
-	generatingMountains = true;
-	t = new Terrain(rightEndpointX, generatingMountains);
-	t->generateEndpoints3D();
-	generatingDesert = false;
-	int treeFactor = 100;
-	int cactusFactor = 800;
-	if (generatingDesert)
-	{
-		t->TerrainGenerate(1024, .05);
-		plantCacti(cactusFactor);
-	}
-	else if (generatingMountains)
-	{
-		t->TerrainGenerate(1024, .1);
-		plantTrees(treeFactor);
-	}
-	else
-	{
-		t->TerrainGenerate(1024, .03);
-		plantTrees(300);
-	}
-
-	//need something to start with what kind of terrain we're generating
-//	t->generateEndpoints();
-	//calculate values, store in array
-//	t->calcMidpoints(leftEndpointX, t->heights[leftEndpointX], rightEndpointX, t->heights[rightEndpointX], roughnessFactor);
-//	t->makePicture();
-
-
-//	t->printHeights();
 
 	glEnable(GL_NORMALIZE);
-
-
 
 	glutDisplayFunc(display);
 //	glutIdleFunc(idle);
@@ -656,6 +773,8 @@ int main(int argc, char **argv)
 		std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 	}
 	std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
+
+	makeMenu();
 
     /* Start the main GLUT loop */
     /* NOTE: No code runs after this */
