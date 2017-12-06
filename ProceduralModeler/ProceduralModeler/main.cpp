@@ -391,13 +391,13 @@ void drawTerrain3D()
 				}
 				if (generatingMountains)
 				{
-					if (t->terrain[z * scale][(x + 1) * scale] > 150)
+					if (t->terrain[z * scale][(x + 1) * scale] > 150 && t->terrain[z * scale][(x + 1) * scale] < 275 )
 					{
 						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
 					}
-					else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+					else if (t->terrain[z * scale][(x + 1) * scale] >= 275)
 					{
-						glColor3f(1.0, 1.0, 1.0);
+						glColor3f(1.0 - .05 * color, 1.0 - .05 * color, 1.0 - .05 * color);
 					}
 				}
 			}
@@ -447,13 +447,13 @@ void drawTerrain3D()
 				}
 				if (generatingMountains)
 				{
-					if (t->terrain[z * scale][(x + 1) * scale] > 150)
+					if (t->terrain[z * scale][(x + 1) * scale] > 150 && t->terrain[z * scale][(x + 1) * scale] < 275)
 					{
 						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
 					}
-					else if (t->terrain[z * scale][(x + 1) * scale] > 250)
+					else if (t->terrain[z * scale][(x + 1) * scale] >= 275)
 					{
-						glColor3f(1.0, 1.0, 1.0);
+						glColor3f(1.0 - .05 * color, 1.0 - .05 * color, 1.0 - .05 * color);
 					}
 				}
 			}
@@ -476,8 +476,6 @@ void drawTerrain3D()
 
 void drawClouds()
 {
-
-
 	//glClearColor(0.2, 0.6, 0.8, 1.0);
 	/*glClear(GL_COLOR_BUFFER_BIT);*/
 	glMatrixMode(GL_PROJECTION);
