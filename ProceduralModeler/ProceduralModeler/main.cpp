@@ -41,6 +41,12 @@ int scale = 4;
 int rows = 1024 / scale;
 int cols = 1024 / scale;
 
+//position for light
+float lightx = 0.5;
+float lighty = 1.0;
+float lightz = 0.0;
+float lightBright = 1.0;
+
 GLfloat modelMat[4][4] = {
 	{ 1, 0, 0, 0 },
 	{ 0, 1, 0, 0 },
@@ -83,28 +89,33 @@ void drawCactus()
 
 
 	//set up lighting effects
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glLoadMatrixf((GLfloat *)modelMat);
 
-	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	//glEnable(GL_COLOR_MATERIAL);
 
-	//// Create light components
-	//float ambientLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	//float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	//float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	//float position[] = { 1.0, 1.0, 0.0, 1.0 };
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
-	//// Assign created components to GL_LIGHT0
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	//glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Create light components
+	float ambientLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
+	float position[] = { 25.0 ,10.0, -70.0, lightBright };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	//glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 
 
 
-	//for each tree
+	//for each cactus
 	for (int t = 0; t < cactusList.size(); t++)
 	{
 		Cactus * cactus = cactusList.at(t);
@@ -147,8 +158,10 @@ void drawCactus()
 			glRotated(angleY, 0, 1, 0);
 			glRotated(angleZ, 0, 0, 1);
 
-			//tappered cylinder 
+			
+			gluSphere(obj, radiusB, 30, 30);
 			gluCylinder(obj, radiusB, radiusT, height, 30, 30);
+			
 			glPopMatrix();
 		
 
@@ -192,26 +205,23 @@ void drawTrees()
 	glLoadMatrixf((GLfloat *)modelMat);
 
 
-	//set up lighting effects
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
-	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	//glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
 
-	//// Create light components
-	//float ambientLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	//float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-	//float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	//float position[] = { 1.0, 1.0, 0.0, 1.0 };
+	// Create light components
+	float ambientLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
+	float position[] = { 25.0 ,10.0, -30.0, lightBright };
 
-	//// Assign created components to GL_LIGHT0
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-	//glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	//glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-	
 
 
 	//for each tree
@@ -289,9 +299,9 @@ void drawTrees()
 	}
 	
 	//disable lighting effects and flush buffers
-	/*glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);*/
+	glDisable(GL_COLOR_MATERIAL);
 	//glutSwapBuffers();
 	//glFlush();
 
@@ -323,7 +333,23 @@ void drawTerrain3D()
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Create light components
+	float ambientLight[] = { 0.6, 0.6, 0.6, lightBright };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
+	float position[] = { 0,100 , 1200, lightBright };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	//glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	int color;
 
@@ -425,7 +451,9 @@ void drawTerrain3D()
 		glEnd();
 	}
 
-
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	//
 	//glutSwapBuffers();
@@ -434,9 +462,7 @@ void drawTerrain3D()
 
 void drawClouds()
 {
-	/* Draw clouds*/
-	//draw clouds from the list
-	
+
 
 	//glClearColor(0.2, 0.6, 0.8, 1.0);
 	/*glClear(GL_COLOR_BUFFER_BIT);*/
@@ -449,6 +475,26 @@ void drawClouds()
 	//glLoadMatrixf((GLfloat *)modelMatC);
 	gluOrtho2D(0, 500, 500, 0);
 	glDisable(GL_DEPTH);
+
+	/* Draw clouds*/
+	//draw clouds from the list
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+
+	// Create light components
+	float ambientLight[] = { 0.6, 0.6, 0.6,lightBright };
+	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
+	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
+	float position[] = { lightx,lighty , lightz, lightBright };
+
+	// Assign created components to GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+	//glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	//for each pixel
 	for (int x = 0; x < winWidth; x++)
@@ -481,6 +527,7 @@ void drawClouds()
 			glColor3f(1- 0.8 * pixColor,1-0.6 * pixColor, 1-0.2 *pixColor);
 			glVertex2i(x, y);
 			glEnd();
+
 		}
 	}
 	glEnable(GL_DEPTH);
@@ -494,41 +541,23 @@ void display()
 		glClearColor(0.2, 0.6, 0.8, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
 
-		glColorMaterial(GL_FRONT, GL_DIFFUSE);
-		glEnable(GL_COLOR_MATERIAL);
 
-		// Create light components
-		float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
-		float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
-		float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-		float position[] = { 200, 200, 306, 1 };
+	///*Draw Clouds comment out if need be*/
+	drawClouds();
 
-		// Assign created components to GL_LIGHT0
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-		glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-		///*Draw Clouds comment out if need be*/
-		drawClouds();
-
-		////drawTerrain();
-		drawTerrain3D();
+	////drawTerrain();
+   drawTerrain3D();
 
 		drawTrees();
 
 		drawCactus();
 
-		glDisable(GL_LIGHT0);
-		glDisable(GL_LIGHTING);
-		glDisable(GL_COLOR_MATERIAL);
-		//flush all changes
-		glutSwapBuffers();
-		glFlush();
-	}
+	
+	//flush all changes
+
+	glutSwapBuffers();
+	glFlush();
 }
 
 void keyboard(unsigned char k, int x, int y)
