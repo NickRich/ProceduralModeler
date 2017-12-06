@@ -37,7 +37,7 @@ float roughnessFactor = 0.1; //Roughness Factor for calculating random variable,
 int winWidth = 500;
 int winHeight = 500;
 
-int scale = 1;
+int scale = 4;
 int rows = 1024 / scale;
 int cols = 1024 / scale;
 
@@ -54,54 +54,6 @@ GLfloat modelMatC[4][4] = {
 	{ 0, 0, 1, 0 },
 	{-500, -500, -1200, 1 }
 };
-
-void drawTerrain()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0.0, 500.0, 500.0, 0.0);
-
-
-	for (int i = 0; i < 500; i++)
-	{
-		for (int j = 0; j < 500; j++)
-		{
-			float pixNoise = t->pixels[i][j];
-			glBegin(GL_POINTS);
-			if (pixNoise == 1.0) {
-				if (j < 100)
-				{
-					glColor3f(1.0, 1.0, 1.0);
-				}
-				else if (j < 250)
-				{
-					glColor3f(0.5, 0.5, 0.5);
-				}
-				else
-				{
-					if (generatingDesert)
-					{
-						glColor3f(0.86, 0.58, 0.44);
-					}
-					else {
-						glColor3f(0.0, 1.0, 0.0);
-					}
-				}
-			}
-			else
-			{
-				glColor3f(0.0, 0.5, 0.8);
-			}
-			glVertex2i(i, j);
-			glEnd();
-		}
-	}
-
-	//glutSwapBuffers();
-	//glFlush();
-}
-
 
 void genCactus(float x, float y, float z)
 {
@@ -532,7 +484,7 @@ void display()
 	float ambientLight[] = { 0.6, 0.6, 0.6, 1.0 };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, 1.0 };
 	float specularLight[] = { 0.5, 0.5, 0.5, 1.0 };
-	float position[] = { 500, 400, 1100, 1.0 };
+	float position[] = { 200, 200, 306, 1};
 
 	// Assign created components to GL_LIGHT0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -641,26 +593,26 @@ int main(int argc, char **argv)
 	t = new Terrain(rightEndpointX, generatingMountains);
 
 	srand(time(NULL));
-	generatingMountains = true;
+	generatingMountains = false;
 	t = new Terrain(rightEndpointX, generatingMountains);
 	t->generateEndpoints3D();
 	generatingDesert = false;
 	int treeFactor = 100;
+	int cactusFactor = 800;
 	if (generatingDesert)
 	{
 		t->TerrainGenerate(1024, .05);
-		plantCacti(800);
+		plantCacti(cactusFactor);
 	}
 	else if (generatingMountains)
 	{
 		t->TerrainGenerate(1024, .1);
-		plantTrees(100);
+		plantTrees(treeFactor);
 	}
 	else
 	{
 		t->TerrainGenerate(1024, .03);
-
-		plantTrees(100);
+		plantTrees(300);
 	}
 
 	//need something to start with what kind of terrain we're generating
