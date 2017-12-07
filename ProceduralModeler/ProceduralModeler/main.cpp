@@ -206,7 +206,7 @@ void drawTrees()
 	float ambientLight[] = { 0.6, 0.6, 0.6, lightBright};
 	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright};
 	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
-	float position[] = { 0.0 ,20.0, -70.0, lightBright};
+	float position[] = { 0.0 ,500.0, -70.0, lightBright};
 
 	// 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -214,7 +214,7 @@ void drawTrees()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-	float ambientLight2[] = { 0.2, 0.2, 0.2, lightBright};
+	float ambientLight2[] = { 0.6, 0.6, 0.6, lightBright};
 	float diffuseLight2[] = { 0.8, 0.8, 0.8, lightBright};
 	float specularLight2[] = { 0.5, 0.5, 0.5, lightBright};
 
@@ -261,10 +261,11 @@ void drawTrees()
 			if (branch->height <= 0.0)
 			{
 				glPushMatrix();
-
+			
 				//position just above tallest branches
 				glTranslatef(x, y - 1 + 0.1, z);
 			
+				glScalef(1.0, -1.0, 1.0);
 				glColor3f(0.5, 0.6 , 0.1);
 				
 				glRotated(angleX, 1, 0, 0);
