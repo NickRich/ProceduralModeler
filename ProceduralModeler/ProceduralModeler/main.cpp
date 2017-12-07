@@ -47,6 +47,9 @@ float lighty = 1.0;
 float lightz = 0.0;
 float lightBright = 1.0;
 
+//can't redraw clouds or they disappear
+int cloudDrawn = 0;
+
 GLfloat modelMat[4][4] = {
 	{ 1, 0, 0, 0 },
 	{ 0, 1, 0, 0 },
@@ -552,13 +555,30 @@ void drawClouds()
 bool terrainChosen = false;
 void display()
 {
-	if (terrainChosen)
+	//if a cloud is already drawn, don't redisplay
+	if (terrainChosen && cloudDrawn == 0)
 	{
 		glClearColor(0.2, 0.6, 0.8, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		drawClouds();
-
+		
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		c = new Cloud();
+		cloudList.push_back(c);
+		
+		//only draw once to save the clouds from destruction
+		if (cloudDrawn == 0)
+		{
+			drawClouds();
+			cloudDrawn = 1;
+		}
+	
 		drawTerrain3D();
 
 		if (generatingDesert)
@@ -585,12 +605,7 @@ void keyboard(unsigned char k, int x, int y)
 	}
 }
 
-/*redraw display*/
-void idle()
-{
-	/* Redraw the window */
-	glutPostRedisplay();
-}
+
 
 int plantGen = 0;
 
@@ -704,55 +719,47 @@ void menu(int value)
 			t->TerrainGenerate(1024, roughness);
 			plantTrees();
 		}
-		cloudList.clear();
-		c = new Cloud();
-		cloudList.push_back(c);
-		c = new Cloud();
-		cloudList.push_back(c);
-		c = new Cloud();
-		cloudList.push_back(c);
-		c = new Cloud();
-		cloudList.push_back(c);
-		c = new Cloud();
-		cloudList.push_back(c);
-		glutPostRedisplay();
+
+		display();
+		
 	}
 }
-
-void mouse(int button, int state, int x, int y)
-{
-	/* Show location of the mouse inside the window */
-	std::cout << "Mouse: (" << x << ", " << y << ")" << std::endl;
-
-	/* Show the button and the event on the mouse */
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-		std::cout << "Mouse: Left button down" << std::endl;
-	}
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
-	{
-		std::cout << "Mouse: Left button up" << std::endl;
-	}
-	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN)
-	{
-		std::cout << "Mouse: Middle button down" << std::endl;
-	}
-	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_UP)
-	{
-		std::cout << "Mouse: Middle button up" << std::endl;
-	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
-	{
-		std::cout << "Mouse: Right button down" << std::endl;
-	}
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
-	{
-		std::cout << "Mouse: Right button up" << std::endl;
-	}
-}
+//
+//void mouse(int button, int state, int x, int y)
+//{
+//	/* Show location of the mouse inside the window */
+//	std::cout << "Mouse: (" << x << ", " << y << ")" << std::endl;
+//
+//	/* Show the button and the event on the mouse */
+//	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+//	{
+//		std::cout << "Mouse: Left button down" << std::endl;
+//	}
+//	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+//	{
+//		std::cout << "Mouse: Left button up" << std::endl;
+//	}
+//	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN)
+//	{
+//		std::cout << "Mouse: Middle button down" << std::endl;
+//	}
+//	else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_UP)
+//	{
+//		std::cout << "Mouse: Middle button up" << std::endl;
+//	}
+//	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+//	{
+//		std::cout << "Mouse: Right button down" << std::endl;
+//	}
+//	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+//	{
+//		std::cout << "Mouse: Right button up" << std::endl;
+//	}
+//}
 
 void makeMenu()
 {
+	
 	terrainID = glutCreateMenu(terrainSubmenu);
 	glutAddMenuEntry("Generate Plains", 0);
 	glutAddMenuEntry("Generate Mountains", 1);
@@ -779,8 +786,9 @@ void makeMenu()
 */
 int main(int argc, char **argv)
 {
-	srand(time(NULL));
 
+	srand(time(NULL));
+	
     /* Initialize the GLUT window */
     glutInit(&argc, argv);
 	glutInitWindowSize(winWidth, winHeight);
@@ -791,7 +799,7 @@ int main(int argc, char **argv)
 	glEnable(GL_NORMALIZE);
 
 	glutDisplayFunc(display);
-	//glutIdleFunc(idle);
+	
 
 	/* Init GLEW */
 	GLenum err = glewInit();
