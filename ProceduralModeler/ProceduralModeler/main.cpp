@@ -398,11 +398,11 @@ void drawTerrain3D()
 				}
 				if (generatingMountains)
 				{
-					if (t->terrain[z * scale][(x + 1) * scale] > 150 && t->terrain[z * scale][(x + 1) * scale] < 275 )
+					if (t->terrain[z * scale][(x + 1) * scale] > 175 && t->terrain[z * scale][(x + 1) * scale] < 300 )
 					{
 						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
 					}
-					else if (t->terrain[z * scale][(x + 1) * scale] >= 275)
+					else if (t->terrain[z * scale][(x + 1) * scale] >= 300)
 					{
 						glColor3f(1.0 - .05 * color, 1.0 - .05 * color, 1.0 - .05 * color);
 					}
@@ -454,11 +454,11 @@ void drawTerrain3D()
 				}
 				if (generatingMountains)
 				{
-					if (t->terrain[z * scale][(x + 1) * scale] > 150 && t->terrain[z * scale][(x + 1) * scale] < 275)
+					if (t->terrain[z * scale][(x + 1) * scale] > 175 && t->terrain[z * scale][(x + 1) * scale] < 300)
 					{
 						glColor3f(0.35 + .05 * color, 0.35 + .05 * color, 0.35 + .05 * color);
 					}
-					else if (t->terrain[z * scale][(x + 1) * scale] >= 275)
+					else if (t->terrain[z * scale][(x + 1) * scale] >= 300)
 					{
 						glColor3f(1.0 - .05 * color, 1.0 - .05 * color, 1.0 - .05 * color);
 					}
