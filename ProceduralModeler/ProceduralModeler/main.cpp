@@ -348,7 +348,7 @@ void drawTerrain3D()
 	float ambientLight[] = { 0.6, 0.6, 0.6, lightBright };
 	float diffuseLight[] = { 0.8, 0.8, 0.8, lightBright };
 	float specularLight[] = { 0.5, 0.5, 0.5, lightBright };
-	float position[] = { 1000,300 , 1200, lightBright };
+	float position[] = { 1300,300 , 1200, lightBright };
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
@@ -622,7 +622,7 @@ void plantCacti()
 	int factor = 0;
 	if (plantGen != 0)
 	{
-		factor = 1200 - 200 * plantGen;
+		factor = 1500 - 200 * plantGen;
 	}
 
 	for (int z = 0; z < 1024; z++)
